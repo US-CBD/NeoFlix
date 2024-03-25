@@ -1,7 +1,9 @@
 class FilterFrame:
-    def __init__(self, settings):
+    def __init__(self, settings, filter_frame):
         self.settings = settings
-        pass
+        self.filter_frame = filter_frame
+        self.genres = []
+        self.fav = []
 
     def initialize(self):
         # Crea las interfaces gráficas.

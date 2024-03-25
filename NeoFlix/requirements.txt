@@ -1,4 +1,0 @@
-loguru==0.7.2
-customtkinter==5.2.2
-py2neo==2021.1.4
-pillow==10.2.0
