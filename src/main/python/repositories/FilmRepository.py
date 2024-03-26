@@ -86,8 +86,7 @@ class FilmRepository(Repository):
         Returns:
             list: Lista de nodos de actores que participan en la película.
         """
-        film_node = self.find(title)
-        if film_node:
+        if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
             actors = matcher.match((film_node, None), "ACTED_BY")
             return [actor.end_node for actor in actors]
@@ -103,8 +102,7 @@ class FilmRepository(Repository):
         Returns:
             list: Lista de nodos de géneros de la película.
         """
-        film_node = self.find(title)
-        if film_node:
+        if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
             genres = matcher.match((film_node, None), "IN_GENRE")
             return [genre.end_node for genre in genres]
@@ -120,8 +118,7 @@ class FilmRepository(Repository):
         Returns:
             Node: El nodo de director encontrado, o None si no se encuentra.
         """
-        film_node = self.find(title)
-        if film_node:
+        if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
             director_rel = matcher.match((film_node, None), "DIRECTED_BY").first()
             return director_rel.end_node
@@ -137,25 +134,23 @@ class FilmRepository(Repository):
         Returns:
             list: Lista de nodos de opiniones de la película.
         """
-        film_node = self.find(title)
-        if film_node:
+        if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
             opinions = matcher.match((None, film_node), "HAS_OPINION")
             return [opinion.start_node for opinion in opinions]
         return []
 
-    def delete(self, title):
+    def delete(self, film):
         """
-        Elimina una película de la base de datos por título.
+        Elimina una película de la base de datos.
 
         Args:
-            title (str): El título de la película a eliminar.
+            film (Film): La película a eliminar.
 
         Returns:
             bool: True si la película se eliminó correctamente, False si no se encontró.
         """
-        film_node = self.find(title)
-        if film_node:
+        if film_node := self.find(film.title):
             tx = self.graph.begin()
             tx.delete(film_node)
             tx.commit()

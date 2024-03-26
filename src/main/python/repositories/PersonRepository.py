@@ -8,6 +8,17 @@ class PersonRepository(Repository):
     Repositorio para personas en la base de datos Neo4j.
     """
 
+    def create_or_update(self, person):
+        """
+        Crea o actualiza una persona en la base de datos.
+
+        Args:
+            person (Person): La persona a crear o actualizar.
+        """
+        person_node = Node("Person", name=person.name, age=person.age, bibliography=person.bibliography)
+        tx = self.graph.begin()
+        tx.merge(person_node, "Person", "name")
+
     def find(self, name):
         """
         Busca una persona por nombre en la base de datos.
@@ -31,11 +42,10 @@ class PersonRepository(Repository):
         Returns:
             list: Lista de nodos de películas dirigidas por la persona.
         """
-        person_node = self.find(name)
-        if person_node:
+        if person_node := self.find(name):
             matcher = RelationshipMatcher(self.graph)
-            films = matcher.match((person_node, None), "DIRECTED_BY")
-            return [film.end_node for film in films]
+            films = matcher.match((None, person_node), "DIRECTED_BY")
+            return [film.start_node for film in films]
         return []
 
     def find_acted_films(self, name):
@@ -48,26 +58,23 @@ class PersonRepository(Repository):
         Returns:
             list: Lista de nodos de películas en las que la persona actuó.
         """
-        person_node = self.find(name)
-        if person_node:
+        if person_node := self.find(name):
             matcher = RelationshipMatcher(self.graph)
-            films = matcher.match((person_node, None), "ACTED_BY")
-            return [film.end_node for film in films]
+            films = matcher.match((None, person_node), "ACTED_BY")
+            return [film.start_node for film in films]
         return []
 
-
-    def delete(self, name):
+    def delete(self, person):
         """
         Elimina una persona de la base de datos.
 
         Args:
-            name (str): El nombre de la persona a eliminar.
+            person (Person): La persona a eliminar.
 
         Returns:
             bool: True si la persona fue eliminada, False si no se encontró.
         """
-        person_node = self.find(name)
-        if person_node:
+        if person_node := self.find(person.name):
             tx = self.graph.begin()
             tx.delete(person_node)
             tx.commit()
