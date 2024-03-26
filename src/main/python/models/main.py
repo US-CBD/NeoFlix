@@ -1,6 +1,6 @@
 from src.main.python.models.models import Film, Person, User, Opinion
 
-# Crear instancias de personas (actores, directores, etc.)
+# Crear instancias de personas (actores, directores, etc.).
 director1 = Person("Frank Darabont", 62, "The Shawshank Redemption, The Green Mile")
 actor1 = Person("Morgan Freeman", 84, "Million Dollar Baby, Se7en")
 actor2 = Person("Tim Robbins", 63, "Mystic River, Arlington Road")

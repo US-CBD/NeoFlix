@@ -17,7 +17,6 @@ class Film(Base):
         self.actors = []
         self.genres = []
         self.opinions = []
-        self.opinions = []
         super().__init__(FilmRepository())
 
     def add_actor(self, actor):
