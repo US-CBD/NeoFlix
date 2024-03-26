@@ -1,9 +1,15 @@
 import customtkinter as ctk
-
-from src.main.python.Settings import Settings
-from src.main.python.frames.FilterFrame import FilterFrame
-from src.main.python.frames.MainFrame import MainFrame
-from src.main.python.frames.SettingsFrame import SettingsFrame
+import os
+try:
+    from src.main.python.Settings import Settings
+    from src.main.python.frames.FilterFrame import FilterFrame
+    from src.main.python.frames.MainFrame import MainFrame
+    from src.main.python.frames.SettingsFrame import SettingsFrame
+except ModuleNotFoundError:
+    from Settings import Settings
+    from frames.FilterFrame import FilterFrame
+    from frames.MainFrame import MainFrame
+    from frames.SettingsFrame import SettingsFrame
 
 
 class NeoFlixApp:
@@ -13,7 +19,10 @@ class NeoFlixApp:
         self.app.geometry("800x600")
         self.app.configure(bg="black")
         self.app.resizable(False, False)
-        self.app.iconbitmap("../resources/favicon.ico")
+        # Get the current file's directory
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        favicon_path = os.path.join(current_dir, '..', 'resources', 'favicon.ico')
+        self.app.iconbitmap(favicon_path)
         self.initialize()
         self.app.mainloop()
 

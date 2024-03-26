@@ -1,7 +1,8 @@
 import customtkinter as ctk
-
-from src.main.python.frames.ScrollableFilmsFrames import ScrollableFilmsFrames
-
+try:
+    from src.main.python.frames.ScrollableFilmsFrames import ScrollableFilmsFrames
+except ModuleNotFoundError:
+    from frames.ScrollableFilmsFrames import ScrollableFilmsFrames
 
 class MainFrame:
     def __init__(self, settings, main_frame):

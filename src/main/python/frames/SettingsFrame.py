@@ -3,9 +3,10 @@ from PIL import Image
 
 import customtkinter as ctk
 import tkinter as tk
-
-from src.main.python.frames.ScrollableFilmsFrames import ScrollableFilmsFrames
-
+try:
+    from src.main.python.frames.ScrollableFilmsFrames import ScrollableFilmsFrames
+except ModuleNotFoundError:
+    from frames.ScrollableFilmsFrames import ScrollableFilmsFrames
 
 class SettingsFrame:
     def __init__(self, settings, settings_frame):
