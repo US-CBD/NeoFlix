@@ -1,11 +1,12 @@
 from configparser import ConfigParser
-
+import os
 from py2neo import Graph, Node, Relationship
 
 class Repository:
     def __init__(self):
         config = ConfigParser()
-        config.read("../config.ini")
+        config_path = os.path.join(os.path.dirname(__file__), "../config.ini")
+        config.read(config_path)
         uri = config.get("NEO4J", "uri")
         user = config.get("NEO4J", "user")
         password = config.get("NEO4J", "password")
