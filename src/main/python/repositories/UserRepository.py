@@ -44,3 +44,9 @@ class UserRepository(Repository):
             tx.commit()
             return True
         return False
+
+    @staticmethod
+    def singleton():
+        if not hasattr(UserRepository, "_instance"):
+            UserRepository._instance = UserRepository()
+        return UserRepository._instance

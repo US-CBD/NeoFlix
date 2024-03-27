@@ -26,3 +26,9 @@ class OpinionRepository(Repository):
             tx.merge(film_node, "Film", "title")
             tx.create(Relationship(film_node, "HAS_OPINION", opinion_node))
         tx.commit()
+
+    @staticmethod
+    def singleton():
+        if not hasattr(OpinionRepository, "_instance"):
+            OpinionRepository._instance = OpinionRepository()
+        return OpinionRepository._instance

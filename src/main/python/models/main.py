@@ -1,15 +1,15 @@
-from src.main.python.models.models import Film, Person, User, Opinion
+from src.main.python.models.models import Film, Worker, User, Opinion
 
 # Crear instancias de personas (actores, directores, etc.).
-director1 = Person("Frank Darabont", 62, "The Shawshank Redemption, The Green Mile")
-actor1 = Person("Morgan Freeman", 84, "Million Dollar Baby, Se7en")
-actor2 = Person("Tim Robbins", 63, "Mystic River, Arlington Road")
-director2 = Person("Francis Ford Coppola", 82, "The Godfather, Apocalypse Now")
-actor3 = Person("Marlon Brando", 80, "On the Waterfront, A Streetcar Named Desire")
-actor4 = Person("Al Pacino", 82, "Scarface, Heat")
-director3 = Person("Christopher Nolan", 51, "Inception, Interstellar")
-actor5 = Person("Christian Bale", 49, "The Prestige, American Psycho")
-actor6 = Person("Heath Ledger", "†", "Brokeback Mountain, A Knight's Tale")
+director1 = Worker("Frank Darabont", 62, "The Shawshank Redemption, The Green Mile")
+actor1 = Worker("Morgan Freeman", 84, "Million Dollar Baby, Se7en")
+actor2 = Worker("Tim Robbins", 63, "Mystic River, Arlington Road")
+director2 = Worker("Francis Ford Coppola", 82, "The Godfather, Apocalypse Now")
+actor3 = Worker("Marlon Brando", 80, "On the Waterfront, A Streetcar Named Desire")
+actor4 = Worker("Al Pacino", 82, "Scarface, Heat")
+director3 = Worker("Christopher Nolan", 51, "Inception, Interstellar")
+actor5 = Worker("Christian Bale", 49, "The Prestige, American Psycho")
+actor6 = Worker("Heath Ledger", "†", "Brokeback Mountain, A Knight's Tale")
 
 # Crear instancias de películas
 film1 = Film("The Shawshank Redemption", "1994", director1, "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.")

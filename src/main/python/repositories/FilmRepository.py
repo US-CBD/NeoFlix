@@ -13,11 +13,11 @@ class FilmRepository(Repository):
         Args:
             film (Film): La película a crear o actualizar.
         """
-        node = Node("Film", title=film.title, release_date=film.release_date, description=film.description)
+        node = Node("Film", title=film.title, release_date=film.release_date, description=film.description, url_image=film.url_image, vote_average=film.vote_average)
         tx = self.graph.begin()
         tx.merge(node, "Film", "title")
-        if film.director:
-            director_node = self._create_or_update_person_node(film.director)
+        for director in film.directors:
+            director_node = self._create_or_update_person_node(director)
             tx.create(Relationship(node, "DIRECTED_BY", director_node))
         for actor in film.actors:
             actor_node = self._create_or_update_person_node(actor)
@@ -41,7 +41,7 @@ class FilmRepository(Repository):
         Returns:
             Node: El nodo de persona creado o actualizado.
         """
-        node = Node("Person", name=person.name, age=person.age, bibliography=person.bibliography)
+        node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography)
         self.graph.merge(node, "Person", "name")
         return node
 
@@ -120,8 +120,8 @@ class FilmRepository(Repository):
         """
         if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
-            director_rel = matcher.match((film_node, None), "DIRECTED_BY").first()
-            return director_rel.end_node
+            directors = matcher.match((film_node, None), "DIRECTED_BY")
+            return [director.end_node for director in directors]
         return None
 
     def find_opinions_for_film(self, title):
@@ -156,3 +156,15 @@ class FilmRepository(Repository):
             tx.commit()
             return True
         return False
+
+    @staticmethod
+    def singleton():
+        """
+        Obtiene la única instancia de este repositorio.
+
+        Returns:
+            FilmRepository: La instancia del repositorio.
+        """
+        if not hasattr(FilmRepository, "_instance"):
+            FilmRepository._instance = FilmRepository()
+        return FilmRepository._instance

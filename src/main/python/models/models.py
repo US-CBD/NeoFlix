@@ -9,15 +9,23 @@ from src.main.python.repositories.UserRepository import UserRepository
 
 class Film(Base):
 
-    def __init__(self, title: str, release_date: str, director, description):
+    def __init__(self, title: str, release_date: str, description, file, vote_average=0.0):
         self.title = title
         self.release_date = release_date
-        self.director = director
+        self.directors = []
         self.description = description
+        self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
+        self.vote_average = vote_average
         self.actors = []
         self.genres = []
         self.opinions = []
-        super().__init__(FilmRepository())
+        super().__init__(FilmRepository.singleton())
+
+    def __str__(self):
+        return f"{self.title} ({self.release_date})"
+
+    def add_director(self, director):
+        self.directors.append(director)
 
     def add_actor(self, actor):
         self.actors.append(actor)
@@ -37,12 +45,12 @@ class Film(Base):
                     description=node["description"])
 
     def get_director(self):
-        self.director = [Person.from_node(director) for director in
+        self.director = [Worker.from_node(director) for director in
                          self.repository.find_director_for_film(self.title)]
         return self.director
 
     def get_actors(self):
-        self.actors = list(set([Person.from_node(actor) for actor in
+        self.actors = list(set([Worker.from_node(actor) for actor in
                                 self.repository.find_actors_for_film(self.title)] + self.actors))
         return self.actors
 
@@ -62,23 +70,25 @@ class Film(Base):
         else:
             return 0
 
-class Person(Base):
-    def __init__(self, name: str, age: int, bibliography: str):
+
+class Worker(Base):
+    def __init__(self, name: str, birthday: str, bibliography: str, department: str):
         self.name = name
-        self.age = age
+        self.birthday = birthday
         self.bibliography = bibliography
+        self.department = department
         self.films = []
-        super().__init__(PersonRepository())
+        super().__init__(PersonRepository.singleton())
 
     def add_film(self, film):
         self.films.append(film)
 
     @staticmethod
     def from_node(node):
-        return Person(name=node["name"], age=node["age"], bibliography=node["bibliography"])
+        return Worker(name=node["name"], birthday=node["age"], bibliography=node["bibliography"])
 
     def to_node(self):
-        return Node("Person", name=self.name, age=self.age, bibliography=self.bibliography)
+        return Node("Person", name=self.name, age=self.birthday, bibliography=self.bibliography)
 
     def get_acted_films(self):
         return [Film.from_node(film) for film in self.repository.find_acted_films(self.name)]
@@ -96,7 +106,7 @@ class Opinion(Base):
         self.rating = rating
         self.user = user
         self.film = film
-        super().__init__(OpinionRepository())
+        super().__init__(OpinionRepository.singleton())
 
     @staticmethod
     def from_node(node):

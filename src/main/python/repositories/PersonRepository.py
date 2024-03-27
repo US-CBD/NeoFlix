@@ -15,7 +15,7 @@ class PersonRepository(Repository):
         Args:
             person (Person): La persona a crear o actualizar.
         """
-        person_node = Node("Person", name=person.name, age=person.age, bibliography=person.bibliography)
+        person_node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography)
         tx = self.graph.begin()
         tx.merge(person_node, "Person", "name")
 
@@ -80,3 +80,9 @@ class PersonRepository(Repository):
             tx.commit()
             return True
         return False
+
+    @staticmethod
+    def singleton():
+        if not hasattr(PersonRepository, "_instance"):
+            PersonRepository._instance = PersonRepository()
+        return PersonRepository._instance
