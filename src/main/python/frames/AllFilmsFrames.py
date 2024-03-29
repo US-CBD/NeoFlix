@@ -1,8 +1,9 @@
-import math
 import os
 import tkinter as tk
-from PIL import Image, ImageTk
+
 import customtkinter as ctk
+from PIL import Image, ImageTk
+
 
 class AllFilmsFrames(ctk.CTkFrame):
     def __init__(self, parent_frame, films, num_columns=6, size=(100, 100), *args, **kwargs):

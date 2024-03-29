@@ -1,4 +1,4 @@
-from py2neo import Relationship, Node, NodeMatcher, RelationshipMatcher
+from py2neo import Node, NodeMatcher, RelationshipMatcher
 
 from src.main.python.repositories.Repository import Repository
 

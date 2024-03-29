@@ -1,6 +1,8 @@
-import customtkinter as ctk
-import tkinter as tk
 import os
+import tkinter as tk
+
+import customtkinter as ctk
+
 try:
     from src.main.python.frames.AllFilmsFrames import AllFilmsFrames
 except ModuleNotFoundError:

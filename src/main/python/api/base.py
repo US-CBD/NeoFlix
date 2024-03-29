@@ -1,6 +1,6 @@
 import time
+import tkinter.messagebox
 from concurrent.futures import ThreadPoolExecutor
-from configparser import ConfigParser
 
 from tmdbv3api import TMDb, Movie, Person, Discover
 from tmdbv3api.objs import genre
@@ -33,10 +33,22 @@ def fetch_genre_ids():
     """
     global MAP_GENRE_NAME
     global MAP_GENRE_ID
-    genres = genre.Genre().movie_list()
+    try:
+        genres = genre.Genre().movie_list()
+    except:
+        tkinter.messagebox.showinfo("Error", "Error fetching genres from TMDb.")
     for genre_data in genres:
         MAP_GENRE_NAME[genre_data['name'].lower()] = genre_data['id']
         MAP_GENRE_ID[genre_data['id']] = genre_data['name']
+
+def get_genre_names():
+    """
+    Obtiene los nombres de los géneros de películas.
+
+    Returns:
+        list: Lista de nombres de géneros.
+    """
+    return list(MAP_GENRE_NAME.keys())
 
 
 def get_genre_id(genre_name):
@@ -78,13 +90,14 @@ def parse_worker_details(cast):
     try:
         details = Person().details(cast['id'])
         return Worker(name=cast['original_name'], birthday=details['birthday'], bibliography=details['biography'],
-                      department=cast['known_for_department'])
+                      department=cast['known_for_department'], file=cast['profile_path'])
     except Exception as e:
+        tkinter.messagebox.showinfo("Error", f"Error parsing worker details: {e}")
         print(f"Error parsing worker details: {e}")
         return None
 
 
-def parse_movie_data(movie_data):
+def parse_movie_data(movie_data, is_popular=False):
     """
     Parsea los datos de una película obtenidos de la API de TMDb.
 
@@ -100,11 +113,14 @@ def parse_movie_data(movie_data):
         release_date=movie_data['release_date'],
         description=movie_data['overview'],
         file=movie_data['poster_path'],
-        vote_average=movie_data['vote_average']
+        vote_average=movie_data['vote_average'],
+        is_popular=is_popular
     )
 
     genre_names = [get_genre_name(genre_id) for genre_id in movie_data['genre_ids']]
-    parse_movie.add_genre(genre_names)
+    for genre_name in genre_names:
+        if genre_name is not None:
+            parse_movie.add_genre(genre_name)
 
     casts = Movie().credits(movie_data['id']).cast
     return parse_movie, casts
@@ -129,36 +145,10 @@ def process_casts(executor, casts, parse_movie):
                 parse_movie.add_director(worker_details)
 
 
-def fetch_movies_by_genre_page(genre_id, page):
-    """
-    Obtiene una página de películas de un género específico desde la API de TMDb.
-
-    Args:
-        genre_id (int): ID del género.
-        page (int): Número de página.
-
-    Returns:
-        list: Lista de películas de la página especificada.
-    """
-    results = Discover().discover_movies({"with_genres": genre_id, "page": page, "sort_by": "popularity.desc"})
-    return results
 
 
-def fetch_popular_movies_page(page):
-    """
-    Obtiene una página de películas populares desde la API de TMDb.
 
-    Args:
-        page (int): Número de página.
-
-    Returns:
-        list: Lista de películas populares de la página especificada.
-    """
-    results = Movie().popular(page=page)
-    return results
-
-
-def process_movies(fetch_function, start, end, max_workers):
+def process_movies(fetch_function, start, end, max_workers, are_popular=False):
     """
     Procesa películas en paralelo utilizando ThreadPoolExecutor.
 
@@ -178,7 +168,7 @@ def process_movies(fetch_function, start, end, max_workers):
             for movie_data in results:
                 print(movie_data['title'])
                 start_time = time.time()
-                parse_movie, casts = parse_movie_data(movie_data)
+                parse_movie, casts = parse_movie_data(movie_data, are_popular)
                 process_casts(executor, casts, parse_movie)
                 end_time = time.time()
                 print("Time =", end_time - start_time)
@@ -188,34 +178,5 @@ def process_movies(fetch_function, start, end, max_workers):
     return movies
 
 
-def get_movies_by_genre(genre_name, start=1, end=2, max_workers=5):
-    """
-    Obtiene películas de un género específico desde la API de TMDb.
-
-    Args:
-        genre_name (str): Nombre del género.
-        start (int): Número de página inicial (por defecto: 1).
-        end (int): Número de página final (por defecto: 2).
-        max_workers (int): Número máximo de hilos de ejecución (por defecto: 5).
-
-    Returns:
-        list: Lista de objetos Film creados a partir de las películas del género especificado.
-    """
-    genre_id = get_genre_id(genre_name)
-    if genre_id is None:
-        return []
-
-    fetch_function = lambda page: fetch_movies_by_genre_page(genre_id, page)
-    return process_movies(fetch_function, start, end, max_workers)
-
-
-if __name__ == "__main__":
-    config = ConfigParser()
-    config.read("../config.ini")
-    token = config.get("TMDB", "password")
-
-    initialize_tmdb(token)
-    fetch_genre_ids()
-    print(get_movies_by_genre("Action"))
 
 

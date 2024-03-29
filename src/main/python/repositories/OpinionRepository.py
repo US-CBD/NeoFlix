@@ -1,5 +1,7 @@
 from py2neo import Node, Relationship
+
 from src.main.python.repositories.Repository import Repository
+
 
 class OpinionRepository(Repository):
     """

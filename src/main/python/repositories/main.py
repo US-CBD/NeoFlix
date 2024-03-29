@@ -1,11 +1,12 @@
-from src.main.python.models.models import Person
 from src.main.python.models.models import Film
-from src.main.python.models.models import User
 from src.main.python.models.models import Opinion
+from src.main.python.models.models import Person
+from src.main.python.models.models import User
 from src.main.python.repositories.FilmRepository import FilmRepository
 from src.main.python.repositories.OpinionRepository import OpinionRepository
 from src.main.python.repositories.PersonRepository import PersonRepository
 from src.main.python.repositories.UserRepository import UserRepository
+
 
 def main():
     # Crear instancias de películas, personas y usuarios

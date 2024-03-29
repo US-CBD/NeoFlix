@@ -1,5 +1,10 @@
+import os
+
+import requests
 from py2neo import NodeMatcher, RelationshipMatcher, Relationship, Node
+
 from src.main.python.repositories.Repository import Repository
+
 
 class FilmRepository(Repository):
     """
@@ -13,7 +18,15 @@ class FilmRepository(Repository):
         Args:
             film (Film): La película a crear o actualizar.
         """
-        node = Node("Film", title=film.title, release_date=film.release_date, description=film.description, url_image=film.url_image, vote_average=film.vote_average)
+        node = Node("Film", title=film.title, release_date=film.release_date, description=film.description, url_image=film.url_image, vote_average=film.vote_average, is_popular=film.is_popular)
+
+
+        image_path = film.get_path()
+        if not os.path.exists(image_path):
+            image = requests.get(film.url_image)
+            with open(image_path, "wb") as file:
+                file.write(image.content)
+
         tx = self.graph.begin()
         tx.merge(node, "Film", "title")
         for director in film.directors:
@@ -41,7 +54,12 @@ class FilmRepository(Repository):
         Returns:
             Node: El nodo de persona creado o actualizado.
         """
-        node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography)
+        node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography, url_image=person.url_image)
+        image_path = person.get_path()
+        if not os.path.exists(image_path):
+            image = requests.get(person.url_image)
+            with open(image_path, "wb") as file:
+                file.write(image.content)
         self.graph.merge(node, "Person", "name")
         return node
 
@@ -75,6 +93,29 @@ class FilmRepository(Repository):
         """
         matcher = NodeMatcher(self.graph)
         return matcher.match("Film", title=title).first()
+
+    def find_popular(self):
+        """
+        Busca las películas populares en la base de datos.
+
+        Returns:
+            list: Lista de nodos de películas populares.
+        """
+        matcher = NodeMatcher(self.graph)
+        return matcher.match("Film", is_popular=True)
+
+    def find_by_genre(self, genre):
+        """
+        Busca películas por género en la base de datos.
+
+        Args:
+            genre (str): El género a buscar.
+
+        Returns:
+            list: Lista de nodos de películas del género especificado.
+        """
+        matcher = NodeMatcher(self.graph)
+        return matcher.match("Film", genres=genre)
 
     def find_actors_for_film(self, title):
         """

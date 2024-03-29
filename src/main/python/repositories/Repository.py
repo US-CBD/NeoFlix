@@ -1,6 +1,8 @@
-from configparser import ConfigParser
 import os
-from py2neo import Graph, Node, Relationship
+from configparser import ConfigParser
+
+from py2neo import Graph
+
 
 class Repository:
     def __init__(self):

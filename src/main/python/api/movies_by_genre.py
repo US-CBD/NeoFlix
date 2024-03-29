@@ -1,47 +1,20 @@
-from tmdbv3api.objs import genre
+from tmdbv3api import Discover
 
-from src.main.python.api.base import fetch_movies_by_genre_page, process_movies
+from src.main.python.api.base import process_movies, get_genre_id
 
-MAP_GENRE_NAME = {}
-MAP_GENRE_ID = {}
-
-def fetch_genre_ids():
+def fetch_movies_by_genre_page(genre_id, page):
     """
-    Obtiene los IDs y nombres de géneros de películas desde la API de TMDb
-    y los almacena en los diccionarios globales MAP_GENRE_NAME y MAP_GENRE_ID.
-    """
-    global MAP_GENRE_NAME
-    global MAP_GENRE_ID
-    genres = genre.Genre().movie_list()
-    for genre_data in genres:
-        MAP_GENRE_NAME[genre_data['name'].lower()] = genre_data['id']
-        MAP_GENRE_ID[genre_data['id']] = genre_data['name']
-
-
-def get_genre_id(genre_name):
-    """
-    Obtiene el ID de un género dado su nombre.
-
-    Args:
-        genre_name (str): Nombre del género.
-
-    Returns:
-        int or None: ID del género si se encuentra, None si no se encuentra.
-    """
-    return MAP_GENRE_NAME.get(genre_name.lower())
-
-
-def get_genre_name(genre_id):
-    """
-    Obtiene el nombre de un género dado su ID.
+    Obtiene una página de películas de un género específico desde la API de TMDb.
 
     Args:
         genre_id (int): ID del género.
+        page (int): Número de página.
 
     Returns:
-        str or None: Nombre del género si se encuentra, None si no se encuentra.
+        list: Lista de películas de la página especificada.
     """
-    return MAP_GENRE_ID.get(genre_id)
+    results = Discover().discover_movies({"with_genres": genre_id, "page": page, "sort_by": "popularity.desc"})
+    return results
 def get_movies_by_genre(genre_name, start=1, end=2, max_workers=5):
     """
     Obtiene películas de un género específico desde la API de TMDb.

@@ -1,8 +1,7 @@
-import customtkinter as ctk
-
 import os
-from PIL import Image
+
 import customtkinter as ctk
+from PIL import Image
 
 
 class ScrollableFilmsFrames(ctk.CTkFrame):

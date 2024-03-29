@@ -1,3 +1,5 @@
+import os
+
 from py2neo import Node
 
 from src.main.python.models.base import Base
@@ -9,13 +11,19 @@ from src.main.python.repositories.UserRepository import UserRepository
 
 class Film(Base):
 
-    def __init__(self, title: str, release_date: str, description, file, vote_average=0.0):
+    def __init__(self, title: str, release_date: str, description, file, vote_average=0.0, is_popular=False):
         self.title = title
         self.release_date = release_date
         self.directors = []
         self.description = description
+        if file is None or not ("." in file or "/" in file) or file == "None" or file == "":
+            self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
+        self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
+        if self.url_image == "https://image.tmdb.org/t/p/original/None":
+            self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
         self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
         self.vote_average = vote_average
+        self.is_popular = is_popular
         self.actors = []
         self.genres = []
         self.opinions = []
@@ -43,6 +51,22 @@ class Film(Base):
     def from_node(node):
         return Film(title=node["title"], release_date=node["release_date"], director=None,
                     description=node["description"])
+
+    @staticmethod
+    def find_by_genre(genre):
+        return [Film.from_node(film) for film in FilmRepository.singleton().find_by_genre(genre)]
+
+    @staticmethod
+    def find_popular():
+        return [Film.from_node(film) for film in FilmRepository.singleton().find_popular()]
+
+
+
+    def get_path(self):
+        folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../resources/images/films/')
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        return os.path.join(folder + self.title + "." + self.url_image.split('.')[-1])
 
     def get_director(self):
         self.director = [Worker.from_node(director) for director in
@@ -72,11 +96,16 @@ class Film(Base):
 
 
 class Worker(Base):
-    def __init__(self, name: str, birthday: str, bibliography: str, department: str):
+    def __init__(self, name: str, birthday: str, bibliography: str, department: str, file: str):
         self.name = name
         self.birthday = birthday
         self.bibliography = bibliography
         self.department = department
+        if file is None or not ("." in file or "/" in file) or file == "None" or file == "":
+            self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
+        self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
+        if self.url_image == "https://image.tmdb.org/t/p/original/None":
+            self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
         self.films = []
         super().__init__(PersonRepository.singleton())
 
@@ -98,6 +127,12 @@ class Worker(Base):
 
     def get_films(self):
         return list(set(self.get_acted_films() + self.get_directed_films()))
+
+    def get_path(self):
+        folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../resources/images/persons/')
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        return os.path.join(folder + self.name + "." + self.url_image.split('.')[-1])
 
 
 class Opinion(Base):

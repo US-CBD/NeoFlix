@@ -1,4 +1,13 @@
 class Settings:
     def __init__(self):
-        # TODO: This object must be a singleton.
-        pass
+        self.selected_genres = []
+        self.update = False
+
+    def add_genre(self, genre):
+        self.selected_genres.append(genre)
+
+    def remove_genre(self, genre):
+        self.selected_genres.remove(genre)
+
+    def check_genre(self, genre):
+        return genre in self.selected_genres
