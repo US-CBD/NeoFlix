@@ -33,7 +33,8 @@ class NeoFlixApp:
 
     def initialize(self):
         config = ConfigParser()
-        config.read("config.ini")
+        config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.ini")
+        config.read(config_path)
         token = config.get("TMDB", "password")
         initialize_tmdb(token)
 

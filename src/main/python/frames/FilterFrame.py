@@ -1,6 +1,7 @@
+from configparser import ConfigParser
 import os
 import tkinter as tk
-
+from py2neo import Graph
 import customtkinter as ctk
 
 try:
@@ -59,14 +60,29 @@ class FilterFrame:
     def filter_films(self, *args):
         filter_option = self.filter_option.get()
         search_text = self.search_var.get()
-        for (title, frame, films), all_films_frame in zip(self.films_frames, self.all_films_frame):
-            if filter_option == "film":
-                filtered_films = [film for film in films if search_text.lower() in film[0].lower()]
-            else:
-                filtered_films = films
-            
-            all_films_frame.update_films(filtered_films)
-            
+
+        config = ConfigParser()
+        config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "config.ini")
+        config.read(config_path)
+
+        uri = config.get("NEO4J", "uri")
+        username = config.get("NEO4J", "user")
+        password = config.get("NEO4J", "password")
+        graph = Graph(uri, auth=(username, password))
+
+        if filter_option == "film":
+            query = f"MATCH (f:Film) WHERE f.title CONTAINS '{search_text}' RETURN f"
+        else:
+            query = "MATCH (f:Film) RETURN f"
+
+        result = graph.run(query)
+        films = [record["f"] for record in result]
+
+        # Call update_films on each AllFilmsFrames object in the list
+        for all_films_frame in self.all_films_frame:
+            all_films_frame.update_films(films)
+
+
     def configure(self):
         self.filter_frame.grid_rowconfigure(0, weight=1)
         self.filter_frame.grid_columnconfigure(0, weight=1)
