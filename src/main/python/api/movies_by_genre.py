@@ -2,6 +2,7 @@ from tmdbv3api import Discover
 
 from src.main.python.api.base import process_movies, get_genre_id
 
+
 def fetch_movies_by_genre_page(genre_id, page):
     """
     Obtiene una página de películas de un género específico desde la API de TMDb.

@@ -2,7 +2,7 @@ import time
 import tkinter.messagebox
 from concurrent.futures import ThreadPoolExecutor
 
-from tmdbv3api import TMDb, Movie, Person, Discover
+from tmdbv3api import TMDb, Movie, Person
 from tmdbv3api.objs import genre
 
 from src.main.python.models.models import Film, Worker
