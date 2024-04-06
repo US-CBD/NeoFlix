@@ -53,6 +53,14 @@ class Film(Base):
                     description=node["description"])
 
     @staticmethod
+    def find_all():
+        return [Film.from_node(film) for film in FilmRepository.singleton().find_all()]
+
+    @staticmethod
+    def find_by_title(title):
+        return [Film.from_node(film) for film in FilmRepository.singleton().find(title)]
+
+    @staticmethod
     def find_by_genre(genre):
         return [Film.from_node(film) for film in FilmRepository.singleton().find_by_genre(genre)]
 

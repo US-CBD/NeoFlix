@@ -181,6 +181,16 @@ class FilmRepository(Repository):
             return [opinion.start_node for opinion in opinions]
         return []
 
+    def find_all(self):
+        """
+        Busca todas las películas en la base de datos.
+
+        Returns:
+            list: Lista de nodos de todas las películas.
+        """
+        matcher = NodeMatcher(self.graph)
+        return matcher.match("Film")
+
     def delete(self, film):
         """
         Elimina una película de la base de datos.
