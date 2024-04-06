@@ -1,12 +1,13 @@
-from configparser import ConfigParser
 import os
 import tkinter as tk
-from py2neo import Graph
+
 import customtkinter as ctk
 
 try:
-    from src.main.python.frames.AllFilmsFrames import AllFilmsFrames
+    from src.main.python.models.models import Film
+    from src.main.python.frames.list.ListFilmsFrames import AllFilmsFrames
 except ModuleNotFoundError:
+    from models.models import Film
     from frames.AllFilmsFrames import AllFilmsFrames
 
 class FilterFrame:
@@ -61,22 +62,10 @@ class FilterFrame:
         filter_option = self.filter_option.get()
         search_text = self.search_var.get()
 
-        config = ConfigParser()
-        config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "config.ini")
-        config.read(config_path)
-
-        uri = config.get("NEO4J", "uri")
-        username = config.get("NEO4J", "user")
-        password = config.get("NEO4J", "password")
-        graph = Graph(uri, auth=(username, password))
-
         if filter_option == "film":
-            query = f"MATCH (f:Film) WHERE f.title CONTAINS '{search_text}' RETURN f"
+            films = Film.find_by_title(search_text)
         else:
-            query = "MATCH (f:Film) RETURN f"
-
-        result = graph.run(query)
-        films = [record["f"] for record in result]
+            films = Film.find_all()
 
         # Call update_films on each AllFilmsFrames object in the list
         for all_films_frame in self.all_films_frame:
@@ -95,10 +84,3 @@ class FilterFrame:
             all_films_frame = AllFilmsFrames(frame, films, width=700, height=150, size=(100, 100))
             all_films_frame.grid(row=1, column=0, sticky="nsew")
             self.all_films_frame.append(all_films_frame)
-
-
-
-    
-    def add_logic(self):
-        # Realiza peticiones cada x tiempo con .after en el frame.
-        pass
