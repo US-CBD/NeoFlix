@@ -115,7 +115,25 @@ class FilmRepository(Repository):
             list: Lista de nodos de películas del género especificado.
         """
         matcher = NodeMatcher(self.graph)
-        return matcher.match("Film", genres=genre)
+        if genre_node := self.find_genre(genre):
+            matcher = RelationshipMatcher(self.graph)
+            films = matcher.match((None, genre_node), "IN_GENRE")
+            print(films)
+            return [film.start_node for film in films]
+        return []
+
+    def find_genre(self, genre):
+        """
+        Busca el gebrero por nombre en la base de datos.
+
+        Args:
+            genre (str): El gebrero a buscar.
+
+        Returns:
+            Node: El nodo de gebrero encontrado, o None si no se encuentra.
+        """
+        matcher = NodeMatcher(self.graph)
+        return matcher.match("Genre", name=genre).first()
 
     def find_actors_for_film(self, title):
         """

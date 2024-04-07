@@ -23,7 +23,7 @@ class SettingsFrame:
         # TODO: Se deben de obtener desde la base de datos.
         fetch_genre_ids()
         self.genres = get_genre_names()
-        self.favorites = [("a", "../../resources/placeholder.jpg"), ("b", "../../resources/placeholder.jpg"), ("c", "../../resources/placeholder.jpg")]
+        self.favorites = []
         self.genres_frame = None
         self.favorites_frame = None
 

@@ -1,6 +1,6 @@
 class Settings:
     def __init__(self):
-        self.selected_genres = []
+        self.selected_genres = ['Action'] # TODO: Cambiar
         self.update = False
 
     def add_genre(self, genre):

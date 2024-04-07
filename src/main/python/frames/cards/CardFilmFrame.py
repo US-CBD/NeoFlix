@@ -22,13 +22,12 @@ class CardFilmFrame:
     def initialize(self):
         name = ctk.CTkLabel(self.parent_frame, text=self.film.title, fg_color="gray30", corner_radius=6)
         name.grid(row=self.row, column=self.column)
-        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.film.image)
-        image = ctk.CTkImage(Image.open(image_path), size=self.size)
+        image = ctk.CTkImage(Image.open(self.film.get_path()), size=self.size)
         button = ctk.CTkButton(self.parent_frame, text="", image=image, command=lambda: self.show_detail_frame())
         button.grid(row=self.row + 1, column=self.column)
 
     def show_detail_frame(self):
-        self.details_window = tk.Toplevel(self)
+        self.details_window = tk.Toplevel(self.parent_frame)
         self.details_window.configure(bg="black")
 
         # Create an instance of DetailsFilmFrame with the film data and pack it into the new window

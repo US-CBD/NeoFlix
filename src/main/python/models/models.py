@@ -18,10 +18,8 @@ class Film(Base):
         self.description = description
         if file is None or not ("." in file or "/" in file) or file == "None" or file == "":
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
-        self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
         if self.url_image == "https://image.tmdb.org/t/p/original/None":
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
-        self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
         self.vote_average = vote_average
         self.is_popular = is_popular
         self.actors = []
@@ -49,8 +47,10 @@ class Film(Base):
 
     @staticmethod
     def from_node(node):
-        return Film(title=node["title"], release_date=node["release_date"], director=None,
-                    description=node["description"])
+        film = Film(title=node["title"], release_date=node["release_date"],
+                    description=node["description"], file=None)
+        film.url_image = node["url_image"]
+        return film
 
     @staticmethod
     def find_all():
@@ -76,7 +76,7 @@ class Film(Base):
             os.makedirs(folder)
         return os.path.join(folder + self.title + "." + self.url_image.split('.')[-1])
 
-    def get_director(self):
+    def get_directors(self):
         self.director = [Worker.from_node(director) for director in
                          self.repository.find_director_for_film(self.title)]
         return self.director

@@ -3,12 +3,14 @@ import tkinter as tk
 
 import customtkinter as ctk
 
+
+
 try:
+    from src.main.python.frames.list.ListFilmFrames import AllFilmsFrames
     from src.main.python.models.models import Film
-    from src.main.python.frames.list.ListFilmsFrames import AllFilmsFrames
 except ModuleNotFoundError:
     from models.models import Film
-    from frames.AllFilmsFrames import AllFilmsFrames
+    from frames.list.ListFilmFrames import AllFilmsFrames
 
 class FilterFrame:
     def __init__(self, settings, filter_frame):
@@ -42,11 +44,11 @@ class FilterFrame:
         # Crea el dropdown menu
         self.dropdown_menu = ctk.CTkFrame(top_frame)
         for option in ["filter", "actor", "director", "film"]:
-            button = ctk.CTkButton(self.dropdown_menu, text=option, command=lambda option=option: self.select_option(option))
+            button = ctk.CTkButton(self.dropdown_menu, text=option, command=lambda: self.select_option(option))
             button.pack()
 
-        self.films_frames = [("Filtro", ctk.CTkFrame(scrollable_frame), 
-                      [(f"Pelicula{i}", os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../resources/placeholder.jpg")) for i in range(70)])]
+        self.films_frames = [("Filtro", ctk.CTkFrame(scrollable_frame),
+                      Film.find_all())]
         self.configure()
 
     def open_menu(self):

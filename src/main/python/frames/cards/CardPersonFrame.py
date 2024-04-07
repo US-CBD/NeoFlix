@@ -27,7 +27,7 @@ class CardPersonFrame:
         button.grid(row=self.row+1, column=self.column)
 
     def show_detail_frame(self):
-        self.details_window = tk.Toplevel(self)
+        self.details_window = tk.Toplevel(self.parent_frame)
         self.details_window.configure(bg="black")
 
         # Create an instance of DetailsFilmFrame with the film data and pack it into the new window
