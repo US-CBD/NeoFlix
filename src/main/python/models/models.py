@@ -18,6 +18,7 @@ class Film(Base):
         self.description = description
         if file is None or not ("." in file or "/" in file) or file == "None" or file == "":
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
+        self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
         if self.url_image == "https://image.tmdb.org/t/p/original/None":
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
         self.vote_average = vote_average

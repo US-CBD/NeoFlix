@@ -1,9 +1,6 @@
-import os
 import tkinter as tk
 
 import customtkinter as ctk
-
-
 
 try:
     from src.main.python.frames.list.ListFilmFrames import AllFilmsFrames

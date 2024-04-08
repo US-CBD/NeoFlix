@@ -22,7 +22,9 @@ class FilmRepository(Repository):
 
 
         image_path = film.get_path()
+        print(image_path)
         if not os.path.exists(image_path):
+            print(f"Downloading image for {film.title}")
             image = requests.get(film.url_image)
             with open(image_path, "wb") as file:
                 file.write(image.content)
@@ -56,7 +58,9 @@ class FilmRepository(Repository):
         """
         node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography, url_image=person.url_image)
         image_path = person.get_path()
+        print(image_path)
         if not os.path.exists(image_path):
+            print(f"Downloading image for {person.name}")
             image = requests.get(person.url_image)
             with open(image_path, "wb") as file:
                 file.write(image.content)
@@ -114,11 +118,9 @@ class FilmRepository(Repository):
         Returns:
             list: Lista de nodos de películas del género especificado.
         """
-        matcher = NodeMatcher(self.graph)
         if genre_node := self.find_genre(genre):
             matcher = RelationshipMatcher(self.graph)
             films = matcher.match((None, genre_node), "IN_GENRE")
-            print(films)
             return [film.start_node for film in films]
         return []
 

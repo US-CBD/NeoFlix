@@ -1,14 +1,12 @@
-import os
-
 import customtkinter as ctk
-from PIL import Image
+
+from src.main.python.frames.cards.CardFilmFrame import CardFilmFrame
 
 
 class ScrollableFilmsFrames(ctk.CTkFrame):
     def __init__(self, parent_frame, films, width=500, height=150, size=(100, 100), *args, **kwargs):
         super().__init__(parent_frame, *args, **kwargs)
         self.films = films
-        print(self.films)
         self.width = width
         self.height = height
         self.size = size
@@ -18,15 +16,5 @@ class ScrollableFilmsFrames(ctk.CTkFrame):
         scrollable_frame = ctk.CTkScrollableFrame(self, orientation="horizontal", width=self.width, height=self.height)
         scrollable_frame.grid(row=1, column=0, sticky="ew")
 
-        print("asdasd")
-        print(self.films)
         for i, film in enumerate(self.films):
-            title = ctk.CTkLabel(scrollable_frame, text=film.title, fg_color="gray30", corner_radius=6)
-            title.grid(row=0, column=i)
-            button_with_image = ctk.CTkImage(Image.open(film.get_path()), size=self.size)
-            ###
-            # TODO: Al pulsar debería de redirigir a detalles de la película.
-            title = ctk.CTkLabel(scrollable_frame, text="", fg_color="gray30", corner_radius=6,
-                                 image=button_with_image)
-            title.grid(row=1, column=i)
-            ###
+            CardFilmFrame(scrollable_frame, film, 0, i, self.size)

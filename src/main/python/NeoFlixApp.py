@@ -47,7 +47,6 @@ class NeoFlixApp:
 
     def configure(self):
         settings = Settings()
-        print("Hola")
         MainFrame(settings, self.main_frame).initialize()
         SettingsFrame(settings,self.settings_frame).initialize()
         FilterFrame(settings, self.filters_frame).initialize()

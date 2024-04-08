@@ -1,5 +1,6 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from PIL import Image
+
 
 class DetailsFilmFrame(ctk.CTkFrame):
     def __init__(self, parent, film, *args, **kwargs):

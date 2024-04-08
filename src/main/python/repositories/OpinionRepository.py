@@ -23,7 +23,6 @@ class OpinionRepository(Repository):
             tx.merge(user_node, "User", "username")
             tx.create(Relationship(opinion_node, "WRITTEN_BY", user_node))
         if opinion.film:
-            print()
             film_node = Node("Film", title=opinion.film.title)
             tx.merge(film_node, "Film", "title")
             tx.create(Relationship(film_node, "HAS_OPINION", opinion_node))
