@@ -123,7 +123,7 @@ class Worker(Base):
 
     @staticmethod
     def from_node(node):
-        return Worker(name=node["name"], birthday=node["age"], bibliography=node["bibliography"])
+        return Worker(name=node["name"], birthday=node["age"], bibliography=node["bibliography"], department=node["department"], file=node["url_image"])
 
     def to_node(self):
         return Node("Person", name=self.name, age=self.birthday, bibliography=self.bibliography)

@@ -180,8 +180,10 @@ class FilmRepository(Repository):
             Node: El nodo de director encontrado, o None si no se encuentra.
         """
         if film_node := self.find(title):
+            print(film_node)
             matcher = RelationshipMatcher(self.graph)
             directors = matcher.match((film_node, None), "DIRECTED_BY")
+            print(directors)
             return [director.end_node for director in directors]
         return None
 
