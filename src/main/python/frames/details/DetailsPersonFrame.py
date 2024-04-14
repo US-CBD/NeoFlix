@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from PIL import ImageTk
+from PIL import Image, ImageTk
 
 
 class DetailsPersonFrame(ctk.CTkFrame):
@@ -10,14 +10,15 @@ class DetailsPersonFrame(ctk.CTkFrame):
         self.initialize()
 
     def initialize(self):
+        self.parent.title(self.person.title)
         self.parent.geometry("800x600")
         self.parent.resizable(False, False)
 
         self.image_frame = ctk.CTkFrame(self)
-        self.image_frame.grid(row=0, column=0)
+        self.image_frame.grid(row=0, column=0, padx=10, pady=10)
 
         self.details_frame = ctk.CTkFrame(self)
-        self.details_frame.grid(row=0, column=1)
+        self.details_frame.grid(row=0, column=1, padx=10, pady=10)
 
         self.configure_widgets()
 
@@ -26,26 +27,28 @@ class DetailsPersonFrame(ctk.CTkFrame):
         self.configure_details()
 
     def configure_image(self):
-        photo = ImageTk.PhotoImage(file=self.person.get_path(), size=(10, 10))
+        image = Image.open(self.person.get_path())
+        image.thumbnail((200, 400))
+        photo = ImageTk.PhotoImage(image)
         image_label = ctk.CTkLabel(self.image_frame, image=photo)
+        image_label.image = photo  # Keep a reference to avoid garbage collection
         image_label.grid(row=0, column=0)
 
     def configure_details(self):
-        self.configure_row(self.details_frame, 0, data_text=self.person.title, is_title=True)
-        self.configure_row(self.details_frame, 1, "Bibliography: ", self.person.bibliography, is_textbox=True)
-        self.configure_row(self.details_frame, 2, "Birthdate: ", self.person.birthdate)
+        title = ctk.CTkLabel(self.details_frame, text=self.person.title, font=("Helvetica", 16, "bold"),
+                             fg_color="gray30")
+        title.grid(row=0, column=0, sticky="w")
 
-    def configure_row(self, parent, row, label_text, data_text, is_textbox=False, is_title=False):
-        if label_text is not None:
-            label = ctk.CTkLabel(parent, text=label_text, fg_color="gray")
-            label.grid(row=row, column=0)
+        bibliography = ctk.CTkLabel(self.details_frame, text="Bibliography:", font=("Helvetica", 12, "bold"),
+                                    fg_color="gray")
+        bibliography.grid(row=1, column=0, sticky="w", pady=(10, 5))
 
-        if not is_textbox:
-            data_label = ctk.CTkLabel(parent, text=data_text, fg_color="gray")
-            data_label.grid(row=row + 1, column=0)
-        elif is_title:
-            title = ctk.CTkLabel(parent, text=data_text, fg_color="gray30", corner_radius=9)
-            title.grid(row=row, column=0)
-        else:
-            textbox = ctk.CTkTextbox(parent, text=data_text, fg_color="gray", corner_radius=6)
-            textbox.grid(row=row + 1, column=0, columnspan=2)
+        bibliography_text = ctk.CTkTextbox(self.details_frame, text=self.person.bibliography, fg_color="gray",
+                                           corner_radius=6, width=40, height=10)
+        bibliography_text.grid(row=2, column=0, sticky="w")
+
+        birthdate = ctk.CTkLabel(self.details_frame, text="Birthdate:", font=("Helvetica", 12, "bold"), fg_color="gray")
+        birthdate.grid(row=3, column=0, sticky="w", pady=(10, 5))
+
+        birthdate_text = ctk.CTkLabel(self.details_frame, text=self.person.birthdate, fg_color="gray")
+        birthdate_text.grid(row=4, column=0, sticky="w")

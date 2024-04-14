@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 
 import customtkinter as ctk
@@ -10,7 +11,7 @@ except ModuleNotFoundError:
 
 
 class CardFilmFrame:
-    def __init__(self, parent_frame, film , row, column, size):
+    def __init__(self, parent_frame, film, row, column, size):
         self.parent_frame = parent_frame
         self.film = film
         self.row = row
@@ -27,11 +28,17 @@ class CardFilmFrame:
 
     def show_detail_frame(self):
         self.details_window = tk.Toplevel(self.parent_frame)
+        self.details_window.title(self.film.title)
+        self.details_window.geometry("1200x1200")
         self.details_window.configure(bg="black")
+        self.details_window.resizable(True, True)
+        # Set icon
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        favicon_path = os.path.join(current_dir, '..', '..', '..', 'resources', 'favicon.ico')
+        self.details_window.iconbitmap(favicon_path)
 
         # Create an instance of DetailsFilmFrame with the film data and pack it into the new window
         self.detail_frame = DetailsFilmFrame(self.details_window, self.film)
-        self.detail_frame.pack()
+        self.detail_frame.pack(fill="both", expand=True)
 
-        # Set the title of the details window
-        self.details_window.title(self.film.title)
+        self.details_window.mainloop()
