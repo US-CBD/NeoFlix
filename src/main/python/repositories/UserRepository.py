@@ -56,7 +56,7 @@ class UserRepository(Repository):
 
     def add_favorite_film(self, user, film):
         if user_node := self.find(user.username):
-            film_node = Node("Film", title=film.title, release_date=film.release_date, director=film.director.name,
+            film_node = Node("Film", title=film.title, release_date=film.release_date, director=film.director,
                              description=film.description)
             tx = self.graph.begin()
             tx.merge(film_node, "Film", "title")

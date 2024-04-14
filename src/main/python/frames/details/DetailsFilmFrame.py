@@ -92,10 +92,10 @@ class DetailsFilmFrame(ctk.CTkFrame):
 
     def mark_as_favorite(self):
         if self.settings.user.state_film(self.film):
-            self.settings.user.remove_film(self.film)
+            self.settings.user.remove_favorite_film(self.film)
             showinfo("Success", f"{self.film.title} removed from favorites")
         else:
-            self.settings.user.add_film(self.film)
+            self.settings.user.add_favorite_film(self.film)
             showinfo("Success", f"{self.film.title} added to favorites")
 
         # Actualizar el texto del botón de favoritos
@@ -103,9 +103,9 @@ class DetailsFilmFrame(ctk.CTkFrame):
 
     def update_favorite_button_text(self):
         if self.settings.user.state_film(self.film):
-            self.favorite_button.config(text="💔 Remove from Favorites")
+            self.favorite_button.configure(text="💔 Remove from Favorites")
         else:
-            self.favorite_button.config(text="❤️ Add to Favorites")
+            self.favorite_button.configure(text="❤️ Add to Favorites")
 
 
 
