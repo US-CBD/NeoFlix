@@ -27,7 +27,7 @@ class Film(Base):
         self.genres = []
         self.opinions = []
         super().__init__(FilmRepository.singleton())
-
+        self.get_opinions()
     def __str__(self):
         return f"{self.title} ({self.release_date})"
 
@@ -125,8 +125,9 @@ class Film(Base):
         return self.genres
 
     def get_opinions(self):
-        self.opinions = list(set([Opinion.from_node(opinion) for opinion in self.repository.find_opinions_for_film(
-            self.title)] + self.opinions)) + self.repository.find_opinions_for_film(self.title)
+        self.opinions = [Opinion.from_node(opinion) for opinion in
+                         self.repository.find_opinions_for_film(self.title)]
+        print(self.opinions)
         return self.opinions
 
     def average_rating(self):
@@ -198,6 +199,12 @@ class Opinion(Base):
 
     def to_node(self):
         return Node("Opinion", text=self.text, rating=self.rating)
+    
+    def save(self):
+        self.repository.create_or_update(self)
+
+    def __str__(self):
+        return f"Opinion: {self.text} Rating: {self.rating}"
 
 
 class User(Base):
@@ -209,6 +216,7 @@ class User(Base):
 
     def add_favorite_film(self, film):
         return self.repository.add_favorite_film(self, film)
+
 
     def remove_favorite_film(self, film):
         return self.repository.remove_favorite_film(self, film)

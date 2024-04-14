@@ -3,6 +3,8 @@ from tkinter.messagebox import showinfo
 import customtkinter as ctk
 from PIL import Image
 
+from src.main.python.models.models import Opinion
+
 
 class DetailsFilmFrame(ctk.CTkFrame):
     def __init__(self, parent, film, settings, *args, **kwargs):
@@ -14,7 +16,7 @@ class DetailsFilmFrame(ctk.CTkFrame):
 
     def initialize(self):
         self.parent.geometry("800x600")
-        self.parent.resizable(False, False)
+        self.parent.resizable(False, True)
         self.parent.pack_propagate(True)
 
         self.image_frame = ctk.CTkFrame(self)
@@ -54,12 +56,26 @@ class DetailsFilmFrame(ctk.CTkFrame):
             self.add_scrollable_frame_with_buttons(self.details_frame,
                                                    [director.name for director in self.film.get_directors()], row=4,
                                                    column=0)
-        if len(self.film.get_actors()) >= 1:
+
             self.add_label(self.details_frame, text="Actors: ", row=5, column=0, sticky="w", fg_color="gray")
             self.add_scrollable_frame_with_buttons(self.details_frame, [actor.name for actor in self.film.get_actors()],
                                                    row=6, column=0)
         self.add_label(self.details_frame, text="Description: ", row=7, column=0, sticky="w", fg_color="gray")
         self.add_textbox(self.details_frame, text=self.film.description, row=8, column=0, rowspan=2)
+
+        self.opinion_buttom = ctk.CTkButton(self.details_frame, text="👍 Give your opinion", fg_color="gray", 
+                                            command=lambda: self.open_opinion_frame(self.film))
+        self.opinion_buttom.grid(row=10, column=0, sticky="w", pady=(10, 0))
+
+        #Mostrar opiniones 
+
+        if len(self.film.get_opinions()) >= 1:
+            
+            self.add_label(self.details_frame, text="Opinions: ", row=11, column=0, sticky="w", fg_color="gray")
+            for i, opinion in enumerate(self.film.get_opinions()):
+                print(opinion.text)
+                opinion_text = opinion.__str__()
+                self.add_label(self.details_frame, text=opinion_text, row=12+i, column=0, sticky="w", fg_color="gray")
 
         # Add favorite button
         self.favorite_button = ctk.CTkButton(title_frame, text="❤️ Add to Favorites", fg_color="gray",
@@ -69,6 +85,34 @@ class DetailsFilmFrame(ctk.CTkFrame):
     def add_label(self, parent, text, row, column, sticky, fg_color=None, text_color=None, corner_radius=None):
         label = ctk.CTkLabel(parent, text=text, fg_color=fg_color, text_color=text_color, corner_radius=corner_radius)
         label.grid(row=row, column=column, sticky=sticky, padx=5, pady=5)
+
+    def open_opinion_frame(self, film):
+        opinion_window = ctk.CTkToplevel(self.parent)
+
+        opinion_label = ctk.CTkLabel(opinion_window, text="Give your opinion", fg_color="gray30", corner_radius=6)
+        opinion_label.pack()
+
+        opinion_textbox = ctk.CTkTextbox(opinion_window, fg_color="gray", corner_radius=6)
+        opinion_textbox.pack(padx=5, pady=5)
+
+        opinion_rating_label = ctk.CTkLabel(opinion_window, text="Rating (0-10)", fg_color="gray", corner_radius=6)
+        opinion_rating_label.pack(pady=5)
+
+        opinion_rating = ctk.CTkTextbox(opinion_window, fg_color="gray", corner_radius=6)
+        opinion_rating.pack(padx=5, pady=5)
+
+        submit_button = ctk.CTkButton(opinion_window, text="Submit", fg_color="gray", corner_radius=6,
+                                    command=lambda: self.submit_opinion(film, opinion_textbox.get("1.0", "end-1c"), opinion_rating.get("1.0", "end-1c")))
+                                    
+        submit_button.pack(pady=5)
+
+    def submit_opinion(self, film, opinion, rating):
+        opinon_object = Opinion(film=film, user=self.settings.user, text=opinion, rating=rating)
+        opinon_object.save()
+        self.film.add_opinion(opinion)
+        showinfo("Success", "Opinion added successfully")
+    
+
 
     def add_scrollable_frame_with_buttons(self, parent, items, row, column):
         scrollable_frame = ctk.CTkScrollableFrame(parent, orientation="horizontal", width=200, height=30)

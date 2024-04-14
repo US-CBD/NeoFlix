@@ -211,8 +211,9 @@ class FilmRepository(Repository):
         """
         if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
-            opinions = matcher.match((None, film_node), "HAS_OPINION")
-            return [opinion.start_node for opinion in opinions]
+            opinions = matcher.match((film_node, None), "HAS_OPINION")
+            return [opinion.end_node for opinion in opinions]
+            
         return []
 
     def find_all(self):
