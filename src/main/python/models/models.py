@@ -3,10 +3,10 @@ import os
 from py2neo import Node
 
 from src.main.python.models.base import Base
-from src.main.python.repositories.FilmRepository import FilmRepository
-from src.main.python.repositories.OpinionRepository import OpinionRepository
-from src.main.python.repositories.PersonRepository import PersonRepository
-from src.main.python.repositories.UserRepository import UserRepository
+from src.main.python.repositories.film_repository import FilmRepository
+from src.main.python.repositories.opinion_repository import OpinionRepository
+from src.main.python.repositories.person_repository import PersonRepository
+from src.main.python.repositories.user_repository import UserRepository
 
 
 class Film(Base):
@@ -235,7 +235,7 @@ class User(Base):
         return Node("User", username=self.username)
 
     def get_favorite_films(self):
-        self.favorite_films = list(set([Film.from_node(film) for film in self.repository.find_favourite_films(self.username)] + self.favorite_films))
+        self.favorite_films = [Film.from_node(film) for film in self.repository.find_favourite_films(self.username)]
         return self.favorite_films
 
     def get_opinions(self):
