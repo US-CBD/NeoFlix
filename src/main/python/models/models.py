@@ -151,6 +151,10 @@ class Worker(Base):
     def exists(name):
         return PersonRepository.singleton().exists(name)
 
+    @staticmethod
+    def find(name):
+        return Worker.from_node(PersonRepository.singleton().find(name))
+
 
 class Opinion(Base):
     def __init__(self, text, rating, user, film):

@@ -20,7 +20,7 @@ class AllFilmsFrames(ctk.CTkFrame):
             row = i // self.num_columns
             column = i % self.num_columns
 
-            CardFilmFrame(self, film, row, column, self.size)
+            CardFilmFrame(self, film, self.settings, row, column, self.size)
 
 
     def update_films(self, filtered_film):

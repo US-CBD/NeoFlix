@@ -88,6 +88,8 @@ def parse_worker_details(cast):
         Worker or None: Objeto Worker si los detalles se pudieron parsear correctamente, None en caso contrario.
     """
     try:
+        if Worker.exists(cast['original_name']):
+            return Worker.find(cast['original_name'])
         details = Person().details(cast['id'])
         return Worker(name=cast['original_name'], birthday=details['birthday'], bibliography=details['biography'],
                       department=cast['known_for_department'], file=cast['profile_path'])

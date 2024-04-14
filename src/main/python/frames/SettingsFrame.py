@@ -23,7 +23,7 @@ class SettingsFrame:
         # TODO: Se deben de obtener desde la base de datos.
         fetch_genre_ids()
         self.genres = get_genre_names()
-        self.favorites = []
+        self.favorites = self.settings.user.get_favorite_films()
         self.genres_frame = None
         self.favorites_frame = None
 
@@ -71,14 +71,8 @@ class SettingsFrame:
         load_button.bind("<Button-1>", self.load_up)
 
     def configure_console(self):
-        # Quiero un label con estilo de consolar que me permita ir poniendo mensajes de debug
-        scrollable_frame = ctk.CTkScrollableFrame(self.settings_frame)
-        scrollable_frame.grid(row=3, column=1, columnspan=3,
-                              sticky="nsew")  # Ajusta la configuración sticky para ocupar todo el espacio disponible
-        scrollable_frame.grid_rowconfigure(0, weight=1)  # Hacer que la fila 0 crezca con el cambio de tamaño
-        scrollable_frame.grid_columnconfigure(0, weight=1)  # Hacer que la columna 0 crezca con el cambio de tamaño
-        self.console = ctk.CTkTextbox(scrollable_frame, font=("Console", 12), fg_color="gray30", corner_radius=6)
-        self.console.pack(fill="both", expand=True)
+        self.console = ctk.CTkTextbox(self.settings_frame, font=("Console", 12), fg_color="gray30", corner_radius=6)
+        self.console.grid(columnspan=2, sticky="ew")
         console_redirector = ConsoleRedirector(self.console)
         sys.stdout = console_redirector
         self.update = False
