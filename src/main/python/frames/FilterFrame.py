@@ -40,8 +40,8 @@ class FilterFrame:
 
         # Crea el dropdown menu
         self.dropdown_menu = ctk.CTkFrame(top_frame)
-        for option in ["filter", "actor", "director", "film"]:
-            button = ctk.CTkButton(self.dropdown_menu, text=option, command=lambda: self.select_option(option))
+        for option in ["filter", "actor", "director", "film", "genre"]:
+            button = ctk.CTkButton(self.dropdown_menu, text=option, command=lambda option=option: self.select_option(option))
             button.pack()
 
         self.films_frames = [("Filtro", ctk.CTkFrame(scrollable_frame),
@@ -62,15 +62,19 @@ class FilterFrame:
         search_text = self.search_var.get()
 
         if filter_option == "film":
-            films = Film.find_by_title(search_text)
+            films = Film.contain_by_title(search_text)
+        elif filter_option == "actor":
+            films = Film.contain_by_actor(search_text)
+        elif filter_option == "director":
+            films = Film.contain_by_director(search_text)
+        elif filter_option == "genre":
+            films = Film.contain_by_genre(search_text)
         else:
             films = Film.find_all()
 
         # Call update_films on each AllFilmsFrames object in the list
         for all_films_frame in self.all_films_frame:
             all_films_frame.update_films(films)
-
-
     def configure(self):
         self.filter_frame.grid_rowconfigure(0, weight=1)
         self.filter_frame.grid_columnconfigure(0, weight=1)

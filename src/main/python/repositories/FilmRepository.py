@@ -85,6 +85,17 @@ class FilmRepository(Repository):
             self.graph.merge(user_node, "User", "username")
             self.graph.merge(Relationship(node, "WRITTEN_BY", user_node))
         return node
+    
+    def contains(self, title):
+        return self.graph.run("MATCH (f:Film) WHERE f.title CONTAINS $title RETURN DISTINCT f", title=title).data()
+
+    def contains_by_genre(self, genre):
+        return self.graph.run("MATCH (f:Film)-[:IN_GENRE]->(g:Genre) WHERE g.name CONTAINS $genre RETURN DISTINCT f", genre=genre).data()
+    def contains_by_actor(self, actor):
+        return self.graph.run("MATCH (f:Film)-[:ACTED_BY]->(a:Person) WHERE a.name CONTAINS " +'"'+actor+ '"'+" RETURN DISTINCT f").data()
+
+    def contains_by_director(self, director):
+        return self.graph.run("MATCH (f:Film)-[:DIRECTED_BY]->(d:Person) WHERE d.name CONTAINS "+ '"'+director+'"'+" RETURN DISTINCT f").data()
 
     def find(self, title):
         """

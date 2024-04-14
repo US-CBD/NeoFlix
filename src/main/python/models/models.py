@@ -54,6 +54,18 @@ class Film(Base):
         return film
 
     @staticmethod
+    def from_node2(node):
+        film_node = node['f']
+        return Film(
+            title=film_node["title"],
+            release_date=film_node["release_date"],
+            description=film_node["description"],
+            file=film_node["url_image"],
+            is_popular=film_node.get("is_popular", False),  # Use get method to provide a default value if the key is not present
+            vote_average=film_node.get("vote_average", 0.0)  # Use get method to provide a default value if the key is not present
+        )
+
+    @staticmethod
     def find_all():
         return [Film.from_node(film) for film in FilmRepository.singleton().find_all()]
 
@@ -64,6 +76,22 @@ class Film(Base):
     @staticmethod
     def find_by_genre(genre):
         return [Film.from_node(film) for film in FilmRepository.singleton().find_by_genre(genre)]
+
+    @staticmethod
+    def contain_by_title(title):
+        return [Film.from_node2(film) for film in FilmRepository.singleton().contains(title)]
+
+    @staticmethod
+    def contain_by_genre(genre):
+        return [Film.from_node2(film) for film in FilmRepository.singleton().contains_by_genre(genre)]
+
+    @staticmethod
+    def contain_by_actor(actor):
+        return [Film.from_node2(film) for film in FilmRepository.singleton().contains_by_actor(actor)]
+
+    @staticmethod
+    def contain_by_director(director):
+        return [Film.from_node2(film) for film in FilmRepository.singleton().contains_by_director(director)]
 
     @staticmethod
     def find_popular():
