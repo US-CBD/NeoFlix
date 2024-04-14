@@ -44,12 +44,12 @@ class Film(Base):
         self.opinions.append(opinion)
 
     def to_node(self):
-        return Node("Film", title=self.title, release_date=self.release_date, description=self.description)
+        return Node("Film", title=self.title, release_date=self.release_date, description=self.description, vote_average=self.vote_average, url_image=self.url_image, is_popular=self.is_popular, path=self.get_path())
 
     @staticmethod
     def from_node(node):
         film = Film(title=node["title"], release_date=node["release_date"],
-                    description=node["description"], file=None)
+                    description=node["description"], file=node["url_image"], vote_average=node["vote_average"], is_popular=node["is_popular"])
         film.url_image = node["url_image"]
         return film
 
