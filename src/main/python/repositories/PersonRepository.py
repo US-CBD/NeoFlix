@@ -81,6 +81,18 @@ class PersonRepository(Repository):
             return True
         return False
 
+    def exists(self, name):
+        """
+        Comprueba si una persona existe en la base de datos.
+
+        Args:
+            name (str): El nombre de la persona a comprobar.
+
+        Returns:
+            bool: True si la persona existe, False si no existe.
+        """
+        return self.find(name) is not None
+
     @staticmethod
     def singleton():
         if not hasattr(PersonRepository, "_instance"):

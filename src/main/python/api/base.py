@@ -121,9 +121,13 @@ def parse_movie_data(movie_data, is_popular=False):
     for genre_name in genre_names:
         if genre_name is not None:
             parse_movie.add_genre(genre_name)
-
-    casts = Movie().credits(movie_data['id']).cast
-    return parse_movie, casts
+    print(Movie().credits(movie_data['id']).keys())
+    persons = Movie().credits(movie_data['id'])
+    casts = persons.cast
+    crew = persons.crew
+    print(list(crew))
+    print(list(casts))
+    return parse_movie, set(list(casts) + list(crew))
 
 
 def process_casts(executor, casts, parse_movie):
@@ -143,6 +147,8 @@ def process_casts(executor, casts, parse_movie):
                 parse_movie.add_actor(worker_details)
             elif worker_details.department == 'Directing':
                 parse_movie.add_director(worker_details)
+
+
 
 
 
@@ -168,11 +174,13 @@ def process_movies(fetch_function, start, end, max_workers, are_popular=False):
             for movie_data in results:
                 print(movie_data['title'])
                 start_time = time.time()
-                parse_movie, casts = parse_movie_data(movie_data, are_popular)
-                process_casts(executor, casts, parse_movie)
+                if not Film.exists(movie_data['title']):
+                    parse_movie, casts = parse_movie_data(movie_data, are_popular)
+                    process_casts(executor, casts, parse_movie)
+                    movies.append(parse_movie)
                 end_time = time.time()
                 print("Time =", end_time - start_time)
-                movies.append(parse_movie)
+
     for movie in movies:
         movie.save()
     return movies

@@ -230,6 +230,18 @@ class FilmRepository(Repository):
             return True
         return False
 
+    def exists(self, title):
+        """
+        Verifica si una película existe en la base de datos.
+
+        Args:
+            title (str): El título de la película a verificar.
+
+        Returns:
+            bool: True si la película existe, False si no existe.
+        """
+        return self.find(title) is not None
+
     @staticmethod
     def singleton():
         """

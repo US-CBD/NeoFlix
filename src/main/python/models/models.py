@@ -69,6 +69,10 @@ class Film(Base):
     def find_popular():
         return [Film.from_node(film) for film in FilmRepository.singleton().find_popular()]
 
+    @staticmethod
+    def exists(title):
+        return FilmRepository.singleton().exists(title)
+
 
 
     def get_path(self):
@@ -142,6 +146,10 @@ class Worker(Base):
         if not os.path.exists(folder):
             os.makedirs(folder)
         return os.path.join(folder + self.name + "." + self.url_image.split('.')[-1])
+
+    @staticmethod
+    def exists(name):
+        return PersonRepository.singleton().exists(name)
 
 
 class Opinion(Base):
