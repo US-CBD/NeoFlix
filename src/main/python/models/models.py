@@ -135,6 +135,9 @@ class Film(Base):
         else:
             return 0
 
+    def __str__(self):
+        return f"{self.title} ({self.release_date})"
+
 
 class Worker(Base):
     def __init__(self, name: str, birthday: str, bibliography: str, department: str, file: str):
@@ -204,7 +207,7 @@ class User(Base):
     def __init__(self, username):
         self.username = username
         self.opinions = []
-        self.favorite_films = []
+        self.favourite_films = []
         super().__init__(UserRepository())
 
     def add_favorite_film(self, film):
@@ -226,9 +229,8 @@ class User(Base):
     def to_node(self):
         return Node("User", username=self.username)
 
-    def get_favorite_films(self):
-        self.favorite_films = list(set([Film.from_node(film) for film in self.repository.find_favourite_films(self.username)] + self.favorite_films))
-        return self.favorite_films
+    def get_favourite_films(self):
+        return [Film.from_node(film) for film in self.repository.find_favourite_films(self.username)]
 
     def get_opinions(self):
         self.opinions = list(set([Opinion.from_node(opinion) for opinion in self.repository.find_opinions(self.username)] + self.opinions))

@@ -9,7 +9,7 @@ class UserRepository(Repository):
         node = Node("User", username=user.username)
         tx = self.graph.begin()
         tx.merge(node, "User", "username")
-        for film in user.favorite_films:
+        for film in user.favourite_films:
             film_node = Node("Film", title=film.title, release_date=film.release_date, director=film.director.name,
                              description=film.description)
             tx.merge(film_node, "Film", "title")
@@ -56,7 +56,7 @@ class UserRepository(Repository):
 
     def add_favorite_film(self, user, film):
         if user_node := self.find(user.username):
-            film_node = Node("Film", title=film.title, release_date=film.release_date, director=film.director,
+            film_node = Node("Film", title=film.title, release_date=film.release_date,
                              description=film.description)
             tx = self.graph.begin()
             tx.merge(film_node, "Film", "title")
@@ -68,8 +68,11 @@ class UserRepository(Repository):
     def remove_favorite_film(self, user, film):
         if user_node := self.find(user.username):
             if film_node := self.find_favourite_film(user.username, film.title):
+                matcher = RelationshipMatcher(self.graph)
+                likes = matcher.match((user_node, film_node), "LIKES")
                 tx = self.graph.begin()
-                tx.delete(Relationship(user_node, "LIKES", film_node))
+                for like in likes:
+                    tx.separate(like)
                 tx.commit()
                 return True
         return False

@@ -6,7 +6,8 @@ from src.main.python.models.models import User
 class Settings:
     def __init__(self):
         self.selected_genres = []
-        self.update = False
+        self.update_main = False
+        self.update_favourites = False
         self.user = User(username=os.getenv("USERNAME"))
         self.user.save()
 

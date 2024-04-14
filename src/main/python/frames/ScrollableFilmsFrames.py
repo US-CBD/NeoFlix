@@ -16,6 +16,11 @@ class ScrollableFilmsFrames(ctk.CTkFrame):
     def initialize(self):
         scrollable_frame = ctk.CTkScrollableFrame(self, orientation="horizontal", width=self.width, height=self.height)
         scrollable_frame.grid(row=1, column=0, sticky="ew")
-
         for i, film in enumerate(self.films):
             CardFilmFrame(scrollable_frame, film, self.settings, 0, i, self.size)
+
+    def update_films(self, film):
+        for widget in self.winfo_children():
+            widget.destroy()
+        self.films = film
+        self.initialize()

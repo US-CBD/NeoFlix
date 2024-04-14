@@ -197,7 +197,7 @@ class FilmRepository(Repository):
             directors = matcher.match((film_node, None), "DIRECTED_BY")
             print(directors)
             return [director.end_node for director in directors]
-        return None
+        return []
 
     def find_opinions_for_film(self, title):
         """

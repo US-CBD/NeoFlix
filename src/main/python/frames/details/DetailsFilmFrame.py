@@ -62,8 +62,7 @@ class DetailsFilmFrame(ctk.CTkFrame):
         self.add_textbox(self.details_frame, text=self.film.description, row=8, column=0, rowspan=2)
 
         # Add favorite button
-        self.favorite_button = ctk.CTkButton(title_frame, text="❤️ Add to Favorites", fg_color="gray",
-                                             command=self.mark_as_favorite)
+        self.favorite_button = ctk.CTkLabel(title_frame, text=self.update_favorite_button_text())
         self.favorite_button.grid(row=0, column=1, sticky="w", pady=(10, 0))
 
     def add_label(self, parent, text, row, column, sticky, fg_color=None, text_color=None, corner_radius=None):
@@ -90,7 +89,8 @@ class DetailsFilmFrame(ctk.CTkFrame):
         else:
             return "red"
 
-    def mark_as_favorite(self):
+    def mark_as_favorite(self, event):
+        self.settings.update_favourites = True
         if self.settings.user.state_film(self.film):
             self.settings.user.remove_favorite_film(self.film)
             showinfo("Success", f"{self.film.title} removed from favorites")
@@ -103,9 +103,9 @@ class DetailsFilmFrame(ctk.CTkFrame):
 
     def update_favorite_button_text(self):
         if self.settings.user.state_film(self.film):
-            self.favorite_button.configure(text="💔 Remove from Favorites")
+            return "❤️"
         else:
-            self.favorite_button.configure(text="❤️ Add to Favorites")
+            return ""
 
 
 

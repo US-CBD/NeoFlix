@@ -41,14 +41,13 @@ class MainFrame:
         scrollable_films_frame = ScrollableFilmsFrames(frame, films, self.settings,width=700, height=150, size=(100, 100))
         scrollable_films_frame.grid(row=1, column=0, sticky="ew")
 
-
         self.films_frames.append((title, frame, films))
 
     def add_logic(self):
-        if self.old_selected_genres != self.settings.selected_genres and self.settings.update:
+        if self.old_selected_genres != self.settings.selected_genres and self.settings.update_main:
             self.old_selected_genres = list(self.settings.selected_genres)
             self.clear_frame_and_configure()
-            self.settings.update = False
+            self.settings.update_main = False
 
         self.main_frame.after(100, self.add_logic)
 
