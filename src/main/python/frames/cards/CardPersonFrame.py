@@ -39,7 +39,7 @@ class CardPersonFrame:
         self.details_window.iconbitmap(favicon_path)
 
         # Create an instance of DetailsFilmFrame with the film data and pack it into the new window
-        self.detail_frame = DetailsPersonFrame(self.details_window, self.person)
+        self.detail_frame = DetailsPersonFrame(self.details_window, self.person, self.settings)
         self.detail_frame.pack(fill="both", expand=True)
 
         self.details_window.mainloop()
