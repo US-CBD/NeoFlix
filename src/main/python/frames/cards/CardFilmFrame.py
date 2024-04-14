@@ -11,9 +11,10 @@ except ModuleNotFoundError:
 
 
 class CardFilmFrame:
-    def __init__(self, parent_frame, film, row, column, size):
+    def __init__(self, parent_frame, film, settings, row, column, size):
         self.parent_frame = parent_frame
         self.film = film
+        self.settings = settings
         self.row = row
         self.column = column
         self.size = size

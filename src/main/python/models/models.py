@@ -176,10 +176,16 @@ class User(Base):
         super().__init__(UserRepository())
 
     def add_favorite_film(self, film):
-        self.favorite_films.append(film)
+        return self.repository.add_favorite_film(self, film)
+
+    def remove_favorite_film(self, film):
+        return self.repository.remove_favorite_film(self, film)
+
+    def state_film(self, film):
+        return self.repository.state_film(self, film)
 
     def add_opinion(self, opinion):
-        self.opinions.append(opinion)
+        return self.repository.add_opinion(self, opinion)
 
     @staticmethod
     def from_node(node):

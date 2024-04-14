@@ -6,11 +6,12 @@ except ModuleNotFoundError:
     from frames.cards.CardFilmFrame import CardFilmFrame
 
 class AllFilmsFrames(ctk.CTkFrame):
-    def __init__(self, parent_frame, films, num_columns=4, size=(100, 100), *args, **kwargs):
+    def __init__(self, parent_frame, films, settings, num_columns=4, size=(100, 100), *args, **kwargs):
         super().__init__(parent_frame, *args, **kwargs)
         self.films = films
         self.num_columns = num_columns
         self.size = size
+        self.settings = settings
         self.grid(sticky="nsew")
         self.initialize()
 

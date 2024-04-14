@@ -21,10 +21,11 @@ class MainFrame:
     def configure(self):
         self.films_frames = []
 
+        print(Film.find_popular())
         self.create_scrollable_frame(Film.find_popular(), 0)
 
         for i, genre in enumerate(self.settings.selected_genres):
-            films = Film.find_by_genre(genre)
+            films = Film.find_by_genre(genre.capitalize())
             self.create_scrollable_frame(films, i + 1, genre)
 
         self.main_frame.after(100, self.add_logic)
@@ -37,7 +38,7 @@ class MainFrame:
             title_label = ctk.CTkLabel(frame, text=title, fg_color="gray30", corner_radius=6)
             title_label.grid(row=0, column=0)
 
-        scrollable_films_frame = ScrollableFilmsFrames(frame, films, width=700, height=150, size=(100, 100))
+        scrollable_films_frame = ScrollableFilmsFrames(frame, films, self.settings,width=700, height=150, size=(100, 100))
         scrollable_films_frame.grid(row=1, column=0, sticky="ew")
 
 

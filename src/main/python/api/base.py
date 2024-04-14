@@ -121,13 +121,10 @@ def parse_movie_data(movie_data, is_popular=False):
     for genre_name in genre_names:
         if genre_name is not None:
             parse_movie.add_genre(genre_name)
-    print(Movie().credits(movie_data['id']).keys())
     persons = Movie().credits(movie_data['id'])
     casts = persons.cast
     crew = persons.crew
-    print(list(crew))
-    print(list(casts))
-    return parse_movie, set(list(casts) + list(crew))
+    return parse_movie, set(list(casts))
 
 
 def process_casts(executor, casts, parse_movie):

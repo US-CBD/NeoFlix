@@ -62,13 +62,13 @@ class SettingsFrame:
             self.checkboxes.append([genre, var])
 
     def configure_favorites(self):
-        scrollable_films_frame = ScrollableFilmsFrames(self.favorites_frame, self.favorites)
+        scrollable_films_frame = ScrollableFilmsFrames(self.favorites_frame, self.favorites, self.settings)
         scrollable_films_frame.grid(row=1, column=0, sticky="ew")
 
     def configure_load_button(self):
         load_button = ctk.CTkButton(self.settings_frame, text="Load", corner_radius=6)
         load_button.grid(row=2, column=1)
-        load_button.bind("<Button-1>", self.load_image)
+        load_button.bind("<Button-1>", self.load_up)
 
     def configure_console(self):
         # Quiero un label con estilo de consolar que me permita ir poniendo mensajes de debug
@@ -82,29 +82,32 @@ class SettingsFrame:
         console_redirector = ConsoleRedirector(self.console)
         sys.stdout = console_redirector
         self.update = False
+        self.settings_frame.after(500, self.add_logic)
 
-    def load_image(self, event):
-        threading.Thread(target=self.update_images).start()
+    def load_up(self, event):
+        threading.Thread(target=self.update_db).start()
 
 
     def add_logic(self):
         for genre, var in self.checkboxes:
             if self.settings.check_genre(genre) and not var.get():
                 self.settings.remove_genre(genre)
+                self.settings.update = True
             elif not self.settings.check_genre(genre) and var.get():
                 self.settings.add_genre(genre)
+                self.settings.update = True
         self.settings_frame.after(500, self.add_logic)
 
-    def update_images(self):
+    def update_db(self):
         start = time.time()
         print("==Loading movies==")
-
+        print("==Loading top movies==")
+        get_top_movies()
         for genre, var in self.checkboxes:
             if var.get():
                 print(f"==Loading movies for {genre}==")
                 get_movies_by_genre(genre)
-        print("==Loading top movies==")
-        get_top_movies()
+
         print("==Loading complete==")
         print(f"==Elapsed time: {time.time() - start}==")
         self.settings.update = True

@@ -11,9 +11,10 @@ except ModuleNotFoundError:
 
 
 class CardPersonFrame:
-    def __init__(self, parent_frame, person, row, column, size):
+    def __init__(self, parent_frame, person, settings, row, column, size):
         self.parent_frame = parent_frame
         self.person = person
+        self.settings = settings
         self.row = row
         self.column = column
         self.size = size

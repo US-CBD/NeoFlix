@@ -1,7 +1,15 @@
+import os
+
+from src.main.python.models.models import User
+
+
 class Settings:
     def __init__(self):
-        self.selected_genres = ['Action'] # TODO: Cambiar
+        self.selected_genres = []
         self.update = False
+        self.user = User(username=os.getenv("USERNAME"))
+        self.user.save()
+
 
     def add_genre(self, genre):
         self.selected_genres.append(genre)

@@ -1,12 +1,15 @@
+from tkinter.messagebox import showinfo
+
 import customtkinter as ctk
 from PIL import Image
 
 
 class DetailsFilmFrame(ctk.CTkFrame):
-    def __init__(self, parent, film, *args, **kwargs):
+    def __init__(self, parent, film, settings, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.film = film
+        self.settings = settings
         self.initialize()
 
     def initialize(self):
@@ -47,6 +50,10 @@ class DetailsFilmFrame(ctk.CTkFrame):
         self.add_label(self.details_frame, text="Description: ", row=7, column=0, sticky="w", fg_color="gray")
         self.add_textbox(self.details_frame, text=self.film.description, row=8, column=0, rowspan=2)
 
+        # Add favorite button
+        favorite_button = ctk.CTkButton(self.details_frame, text="Favorite", fg_color="gray", command=self.mark_as_favorite)
+        favorite_button.grid(row=10, column=0, sticky="w", pady=(10, 0))
+
     def add_label(self, parent, text, row, column, sticky, fg_color=None, text_color=None, corner_radius=None):
         label = ctk.CTkLabel(parent, text=text, fg_color=fg_color, text_color=text_color, corner_radius=corner_radius)
         label.grid(row=row, column=column, sticky=sticky, padx=5, pady=5)
@@ -70,6 +77,15 @@ class DetailsFilmFrame(ctk.CTkFrame):
             return "yellow"
         else:
             return "red"
+
+    def mark_as_favorite(self):
+        if self.settings.user.state_film(self.film):
+            self.settings.user.remove_film(self.film)
+            showinfo("Success", f"{self.film.title} removed from favorites")
+        else:
+            self.settings.user.add_film(self.film)
+            showinfo("Success", f"{self.film.title} added to favorites")
+
 
 
 

@@ -29,6 +29,15 @@ class UserRepository(Repository):
             matcher = RelationshipMatcher(self.graph)
             favourite_films = matcher.match((user_node, None), "LIKES")
             return [opinion.end_node for opinion in favourite_films]
+        return []
+    def find_favourite_film(self, username, title):
+        if user_node := self.find(username):
+            matcher = RelationshipMatcher(self.graph)
+            favourite_film = matcher.match((user_node, None), "LIKES")
+            for film in favourite_film:
+                if film.end_node["title"] == title:
+                    return film.end_node
+        return None
 
     def find_opinions(self, username):
         if user_node := self.find(username):
@@ -44,6 +53,30 @@ class UserRepository(Repository):
             tx.commit()
             return True
         return False
+
+    def add_favorite_film(self, user, film):
+        if user_node := self.find(user.username):
+            film_node = Node("Film", title=film.title, release_date=film.release_date, director=film.director.name,
+                             description=film.description)
+            tx = self.graph.begin()
+            tx.merge(film_node, "Film", "title")
+            tx.create(Relationship(user_node, "LIKES", film_node))
+            tx.commit()
+            return True
+        return False
+
+    def remove_favorite_film(self, user, film):
+        if user_node := self.find(user.username):
+            if film_node := self.find_favourite_film(user.username, film.title):
+                tx = self.graph.begin()
+                tx.delete(Relationship(user_node, "LIKES", film_node))
+                tx.commit()
+                return True
+        return False
+
+    def state_film(self, user, film):
+        return self.find(user.username) and self.find_favourite_film(user.username, film.title)
+
 
     @staticmethod
     def singleton():

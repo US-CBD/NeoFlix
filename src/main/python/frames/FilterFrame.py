@@ -80,6 +80,6 @@ class FilterFrame:
             frame.grid(row=i, column=0, sticky="ew")
             title = ctk.CTkLabel(frame, text=title, fg_color="gray30", corner_radius=6)
             title.grid(row=0, column=0)
-            all_films_frame = AllFilmsFrames(frame, films, width=700, height=150, size=(100, 100))
+            all_films_frame = AllFilmsFrames(frame, films, self.settings, width=700, height=150, size=(100, 100))
             all_films_frame.grid(row=1, column=0, sticky="nsew")
             self.all_films_frame.append(all_films_frame)

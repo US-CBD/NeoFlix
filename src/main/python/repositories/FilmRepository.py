@@ -26,6 +26,7 @@ class FilmRepository(Repository):
         if not os.path.exists(image_path):
             print(f"Downloading image for {film.title}")
             image = requests.get(film.url_image)
+            print(image)
             with open(image_path, "wb") as file:
                 file.write(image.content)
 

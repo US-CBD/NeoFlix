@@ -7,9 +7,10 @@ except ModuleNotFoundError:
 
 
 class AllFilmsFrames(ctk.CTkFrame):
-    def __init__(self, parent_frame, persons, num_columns=4, size=(100, 100), *args, **kwargs):
+    def __init__(self, parent_frame, persons, settings, num_columns=4, size=(100, 100), *args, **kwargs):
         super().__init__(parent_frame, *args, **kwargs)
         self.persons = persons
+        self.settings = settings
         self.num_columns = num_columns
         self.size = size
         self.grid(sticky="nsew")
@@ -20,7 +21,7 @@ class AllFilmsFrames(ctk.CTkFrame):
             row = i // self.num_columns
             column = i % self.num_columns
 
-            CardPersonFrame(self, person, row, column, self.size)
+            CardPersonFrame(self, person, self.settings, row, column, self.size)
 
 
     def update_persons(self, filtered_person):
