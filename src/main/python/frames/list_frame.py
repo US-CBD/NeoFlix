@@ -3,7 +3,7 @@ import customtkinter as ctk
 from src.main.python.frames.cards import CardFilmFrame, CardPersonFrame
 
 
-class ListFrames(ctk.CTkFrame):
+class ListFrames(ctk.CTkScrollableFrame):
     def __init__(self, parent_frame, items, item_type, settings, num_columns=4, size=(100, 100), *args, **kwargs):
         super().__init__(parent_frame, *args, **kwargs)
         self.items = items

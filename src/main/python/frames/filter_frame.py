@@ -34,6 +34,7 @@ class FilterFrame(ctk.CTkFrame):
         search_var.trace("w", lambda *args: self.filter_items(filter_option.get(), search_var.get()))
 
         self.list_items_frame = self.get_list_frame()
+        self.list_items_frame.grid(row=1, column=0, sticky="nsew")
 
     def filter_items(self, filter_by, search_text):
         filtered_items = []
@@ -63,7 +64,7 @@ class FilterFilmFrame(FilterFrame):
         super().__init__(parent_frame, settings, filter_options, filter_functions, *args, **kwargs)
 
     def get_list_frame(self):
-        return ListFilmsFrames(self, self.items, self.settings, width=700, height=150, size=(100, 100))
+        return ListFilmsFrames(self, self.items, self.settings, width=780, height=500, size=(100, 100))
 
 
 class FilterPersonFrame(FilterFrame):
