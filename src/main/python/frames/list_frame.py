@@ -12,14 +12,27 @@ class ListFrames(ctk.CTkScrollableFrame):
         self.settings = settings
         self.item_type = item_type
         self.grid(sticky="nsew")
+
+        # Add pagination attributes
+        self.page_number = 0
+        self.items_per_page = num_columns * 2  # Adjust this value as needed
+
         self.initialize()
 
     def initialize(self):
-        for i, item in enumerate(self.items):
+        start = self.page_number * self.items_per_page
+        end = start + self.items_per_page
+        for i, item in enumerate(self.items[start:end]):
             row = i // self.num_columns
             column = i % self.num_columns
 
             self.get_card_frame(item, row, column)
+
+        next_button = ctk.CTkButton(self, text="Next", command=self.next_page)
+        next_button.grid(row=self.num_columns + 1, column=1)
+
+        previous_button = ctk.CTkButton(self, text="Previous", command=self.previous_page)
+        previous_button.grid(row=self.num_columns + 1, column=2)
 
     def get_card_frame(self, item, row, column):
         raise NotImplementedError("Subclasses must implement this method")
@@ -30,6 +43,15 @@ class ListFrames(ctk.CTkScrollableFrame):
             widget.destroy()
         self.items = items
         self.initialize()
+
+    def next_page(self):
+        if(not (self.page_number * self.items_per_page > len(self.items))):
+            self.page_number += 1
+            self.update(self.items)
+
+    def previous_page(self):
+        self.page_number = max(0, self.page_number - 1)
+        self.update(self.items)
 
 
 class ListFilmsFrames(ListFrames):
@@ -46,4 +68,3 @@ class ListPersonsFrames(ListFrames):
 
     def get_card_frame(self, person, row, column):
         CardPersonFrame(self, person, self.settings, row, column, self.size)
-
