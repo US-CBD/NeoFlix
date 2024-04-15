@@ -1,8 +1,9 @@
-import os
 import tkinter.messagebox as tkmessagebox
+
 import PIL
 import customtkinter as ctk
 from PIL import Image
+
 from src.main.python.frames.review_frame import ReviewFrame
 
 
@@ -47,14 +48,14 @@ class DetailFrame:
 
     def add_label(self, parent, text, row, column, sticky, fg_color=None, text_color=None, corner_radius=None,
                   font=None, cursor=None):
-        label = ctk.CTkLabel(parent, text=text if text else "Not available", fg_color=fg_color, text_color=text_color,
+        label = ctk.CTkLabel(parent, text=text or "Not available", fg_color=fg_color, text_color=text_color,
                              corner_radius=corner_radius, font=font, cursor=cursor)
         label.grid(row=row, column=column, sticky=sticky, padx=5, pady=5)
         return label
 
     def add_textbox(self, parent, text, row, column, rowspan):
         textbox = ctk.CTkTextbox(parent, fg_color="gray", corner_radius=6, width=400)
-        textbox.insert("1.0", text if text else "Not available")
+        textbox.insert("1.0", text or "Not available")
         textbox.grid(row=row, column=column, columnspan=2, rowspan=rowspan, sticky="w", padx=5, pady=5)
 
 
@@ -99,9 +100,7 @@ class DetailsFilmFrame(DetailFrame):
 
             self.add_label(self.details_frame, text="Opinions: ", row=11, column=0, sticky="w", fg_color="gray")
             for i, opinion in enumerate(self.item.get_opinions()):
-                print(opinion.text)
-                opinion_text = opinion.__str__()
-                self.add_label(self.details_frame, text=opinion_text, row=12 + i, column=0, sticky="w", fg_color="gray")
+                self.add_label(self.details_frame, text=str(opinion), row=12 + i, column=0, sticky="w", fg_color="gray")
 
     def add_scrollable_frame_with_buttons(self, parent, items, row, column):
         scrollable_frame = ctk.CTkScrollableFrame(parent, orientation="horizontal", width=500, height=30)

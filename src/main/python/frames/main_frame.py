@@ -17,8 +17,6 @@ class MainFrame:
 
     def configure(self):
         self.films_frames = []
-
-        print(Film.find_popular())
         self.create_scrollable_frame(Film.find_popular(), 0)
 
         for i, genre in enumerate(self.settings.selected_genres):

@@ -2,85 +2,85 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from src.main.python.frames.list_film_frames import ListFilmsFrames
-from src.main.python.models.models import Film
+from src.main.python.frames.list_frame import ListFilmsFrames, ListPersonsFrames
+from src.main.python.models.models import Film, Worker
 
 
-class FilterFrame:
-    def __init__(self, settings, filter_frame):
+class FilterFrame(ctk.CTkFrame):
+    def __init__(self, parent_frame, settings, filter_options, filter_functions, *args, **kwargs):
+        super().__init__(parent_frame, *args, **kwargs)
+        self.items = filter_functions['default']()
         self.settings = settings
-        self.filter_frame = filter_frame
-        self.genres = []
-        self.fav = []
-        
+        self.filter_options = filter_options
+        self.filter_functions = filter_functions
+        self.grid(sticky="nsew")
+        self.initialize()
 
     def initialize(self):
-        # Crea un frame para los filtros
-        top_frame = ctk.CTkFrame(self.filter_frame)
-        top_frame.pack(fill="x")
+        filter_frame = ctk.CTkFrame(self)
+        filter_frame.grid(row=0, column=0, sticky="nsew")
 
-        # Crea el dropdown button
-        self.filter_option = tk.StringVar()
-        self.filter_option.set("filter")
-        dropdown_button = ctk.CTkButton(top_frame, textvariable=self.filter_option, command=self.open_menu)
-        dropdown_button.grid(row=0, column=1)
+        filter_option = tk.StringVar()
+        # Ensure all options are converted to strings
+        filter_option = tk.StringVar()
+        filter_option.set(self.filter_options[0])  # Default to the first option
+        filter_dropdown = ctk.CTkOptionMenu(filter_frame, variable=filter_option, values=self.filter_options)
 
-        # Crea el search bar
-        self.search_var = tk.StringVar()
-        search_bar = ctk.CTkEntry(top_frame, textvariable=self.search_var)
-        search_bar.grid(row=0, column=2)
-        self.search_var.trace("w", self.filter_films)
+        filter_dropdown.grid(row=0, column=0, padx=5, pady=5)
 
+        search_var = tk.StringVar()
+        search_entry = ctk.CTkEntry(filter_frame, textvariable=search_var)
+        search_entry.grid(row=0, column=1, padx=5, pady=5)
+        search_var.trace("w", lambda *args: self.filter_items(filter_option.get(), search_var.get()))
 
-        scrollable_frame = ctk.CTkScrollableFrame(self.filter_frame)
-        scrollable_frame.pack(fill="both", expand=True)
+        self.list_items_frame = self.get_list_frame()
 
-        # Crea el dropdown menu
-        self.dropdown_menu = ctk.CTkFrame(top_frame)
-        for option in ["filter", "actor", "director", "film", "genre"]:
-            button = ctk.CTkButton(self.dropdown_menu, text=option, command=lambda option=option: self.select_option(option))
-            button.pack()
-
-        self.films_frames = [("Filtro", ctk.CTkFrame(scrollable_frame),
-                      Film.find_all())]
-        self.configure()
-
-    def open_menu(self):
-        # Abre el menu de opciones
-        self.dropdown_menu.grid(row=1, column=1)
-
-    def select_option(self, option):
-        # Selecciona la opcion
-        self.filter_option.set(option)
-        self.dropdown_menu.grid_forget() 
-
-    def filter_films(self, *args):
-        filter_option = self.filter_option.get()
-        search_text = self.search_var.get()
-
-        if filter_option == "film":
-            films = Film.contain_by_title(search_text)
-        elif filter_option == "actor":
-            films = Film.contain_by_actor(search_text)
-        elif filter_option == "director":
-            films = Film.contain_by_director(search_text)
-        elif filter_option == "genre":
-            films = Film.contain_by_genre(search_text)
+    def filter_items(self, filter_by, search_text):
+        filtered_items = []
+        print(f"Filtering by {filter_by} and search text {search_text}")
+        if filter_by in self.filter_functions:
+            filtered_items = self.filter_functions[filter_by](search_text)
         else:
-            films = Film.find_all()
+            filtered_items = self.filter_functions['default']()
 
-        # Call update_films on each AllFilmsFrames object in the list
-        for all_films_frame in self.all_films_frame:
-            all_films_frame.update_films(films)
-    def configure(self):
-        self.filter_frame.grid_rowconfigure(0, weight=1)
-        self.filter_frame.grid_columnconfigure(0, weight=1)
+        print(f"Filtered items: {filtered_items}")
+        self.list_items_frame.update(filtered_items)
 
-        self.all_films_frame = []
-        for i, (title, frame, films) in enumerate(self.films_frames):
-            frame.grid(row=i, column=0, sticky="ew")
-            title = ctk.CTkLabel(frame, text=title, fg_color="gray30", corner_radius=6)
-            title.grid(row=0, column=0)
-            all_films_frame = ListFilmsFrames(frame, films, self.settings, width=700, height=150, size=(100, 100))
-            all_films_frame.grid(row=1, column=0, sticky="nsew")
-            self.all_films_frame.append(all_films_frame)
+    def get_list_frame(self):
+        raise NotImplementedError("Subclasses must implement this method")
+
+
+class FilterFilmFrame(FilterFrame):
+    def __init__(self, parent_frame, settings, *args, **kwargs):
+        filter_options = ["Filter by", "Title", "Actor", "Director", "Genre"]
+        filter_functions = {
+            "Title": Film.contain_by_title,
+            "Actor": Film.contain_by_actor,
+            "Director": Film.contain_by_director,
+            "Genre": Film.contain_by_genre,
+            "default": Film.find_all
+        }
+        super().__init__(parent_frame, settings, filter_options, filter_functions, *args, **kwargs)
+
+    def get_list_frame(self):
+        return ListFilmsFrames(self, self.items, self.settings, width=700, height=150, size=(100, 100))
+
+
+class FilterPersonFrame(FilterFrame):
+    def __init__(self, parent_frame, settings, *args, **kwargs):
+        filter_options = ["Filter by", "Name", "Acted in", "Directed by"]
+        filter_functions = {
+            "Name": Worker.find,
+            "Acted in": Film.get_actors_for_film,
+            "Directed by": Film.get_directors_for_film,
+            "default": Worker.find_all
+        }
+        super().__init__(parent_frame, settings, filter_options, filter_functions, *args, **kwargs)
+
+    def get_list_frame(self):
+        return ListPersonsFrames(self, self.items, self.settings, width=700, height=150, size=(100, 100))
+
+
+
+
+

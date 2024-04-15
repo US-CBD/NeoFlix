@@ -19,6 +19,16 @@ class PersonRepository(Repository):
         tx = self.graph.begin()
         tx.merge(person_node, "Person", "name")
 
+    def find_all(self):
+        """
+        Busca todas las personas en la base de datos.
+
+        Returns:
+            list: Lista de nodos de personas.
+        """
+        matcher = NodeMatcher(self.graph)
+        return list(matcher.match("Person"))
+
     def find(self, name):
         """
         Busca una persona por nombre en la base de datos.

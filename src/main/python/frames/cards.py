@@ -1,5 +1,6 @@
 import os
 
+import PIL
 import customtkinter as ctk
 from PIL import Image
 
@@ -23,7 +24,10 @@ class CardFrame:
         name = ctk.CTkLabel(self.parent_frame, text=getattr(self.item, self.title_attribute), fg_color="gray30", corner_radius=6)
         name.grid(row=self.row, column=self.column)
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.image_path_method(self.item))
-        image = ctk.CTkImage(Image.open(image_path), size=self.size)
+        try:
+            image = ctk.CTkImage(Image.open(image_path), size=self.size)
+        except PIL.UnidentifiedImageError:
+            image = ctk.CTkImage(Image.new("RGB", self.size, "gray"), size=self.size)
         button = ctk.CTkButton(self.parent_frame, text="", image=image, command=self.show_detail_frame)
         button.grid(row=self.row + 1, column=self.column)
 

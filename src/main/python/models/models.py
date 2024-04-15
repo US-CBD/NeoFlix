@@ -110,14 +110,20 @@ class Film(Base):
         return os.path.join(folder + self.title + "." + self.url_image.split('.')[-1])
 
     def get_directors(self):
-        self.director = [Worker.from_node(director) for director in
+        return [Worker.from_node(director) for director in
                          self.repository.find_director_for_film(self.title)]
-        return self.director
 
     def get_actors(self):
-        self.actors = list(set([Worker.from_node(actor) for actor in
-                                self.repository.find_actors_for_film(self.title)] + self.actors))
-        return self.actors
+        return [Worker.from_node(actor) for actor in
+                                self.repository.find_actors_for_film(self.title)]
+
+    @staticmethod
+    def get_directors_for_film(title):
+        return [Worker.from_node(director) for director in FilmRepository.singleton().find_director_for_film(title)]
+
+    @staticmethod
+    def get_actors_for_film(title):
+        return [Worker.from_node(actor) for actor in FilmRepository.singleton().find_actors_for_film(title)]
 
     def get_genres(self):
         self.genres = list(
@@ -183,6 +189,14 @@ class Worker(Base):
     @staticmethod
     def find(name):
         return Worker.from_node(PersonRepository.singleton().find(name))
+
+    @staticmethod
+    def find_all():
+        return [Worker.from_node(person) for person in PersonRepository.singleton().find_all()]
+
+    @staticmethod
+    def find_by_department(department):
+        return [Worker.from_node(person) for person in PersonRepository.singleton().find_by_department(department)]
 
 
 class Opinion(Base):
