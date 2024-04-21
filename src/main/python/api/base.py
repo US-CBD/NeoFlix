@@ -125,8 +125,7 @@ def parse_movie_data(movie_data, is_popular=False):
             parse_movie.add_genre(genre_name)
     persons = Movie().credits(movie_data['id'])
     casts = persons.cast
-    crew = persons.crew
-    return parse_movie, set(list(casts))
+    return parse_movie, casts
 
 
 def process_casts(executor, casts, parse_movie):
@@ -180,8 +179,11 @@ def process_movies(fetch_function, start, end, max_workers, are_popular=False):
                 end_time = time.time()
                 print("Time =", end_time - start_time)
 
-    for movie in movies:
-        movie.save()
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        for movie in movies:
+            print("Saving " + movie.title)
+            executor.submit(movie.save())
+
     return movies
 
 

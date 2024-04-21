@@ -7,6 +7,8 @@ from src.main.python.repositories.film_repository import FilmRepository
 from src.main.python.repositories.opinion_repository import OpinionRepository
 from src.main.python.repositories.person_repository import PersonRepository
 from src.main.python.repositories.user_repository import UserRepository
+import PIL.Image as Image
+import customtkinter as ctk
 
 
 class Film(Base):
@@ -20,6 +22,11 @@ class Film(Base):
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
         self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
         if self.url_image == "https://image.tmdb.org/t/p/original/None":
+            self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.get_path())
+        try:
+            ctk.CTkImage(Image.open(image_path), size=(100, 100))
+        except:
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
         self.vote_average = vote_average
         self.is_popular = is_popular
@@ -133,7 +140,6 @@ class Film(Base):
     def get_opinions(self):
         self.opinions = [Opinion.from_node(opinion) for opinion in
                          self.repository.find_opinions_for_film(self.title)]
-        print(self.opinions)
         return self.opinions
 
     def average_rating(self):
@@ -153,6 +159,11 @@ class Worker(Base):
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
         self.url_image = f'https://image.tmdb.org/t/p/original/{file}'
         if self.url_image == "https://image.tmdb.org/t/p/original/None":
+            self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.get_path())
+        try:
+            ctk.CTkImage(Image.open(image_path), size=(100, 100))
+        except:
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
         self.films = []
         super().__init__(PersonRepository.singleton())

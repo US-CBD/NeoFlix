@@ -38,13 +38,12 @@ class FilterFrame(ctk.CTkFrame):
 
     def filter_items(self, filter_by, search_text):
         filtered_items = []
-        print(f"Filtering by {filter_by} and search text {search_text}")
+
         if filter_by in self.filter_functions:
             filtered_items = self.filter_functions[filter_by](search_text)
         else:
             filtered_items = self.filter_functions['default']()
 
-        print(f"Filtered items: {filtered_items}")
         self.list_items_frame.update(filtered_items)
 
     def get_list_frame(self):

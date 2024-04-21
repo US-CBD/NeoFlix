@@ -97,6 +97,7 @@ class SettingsFrame:
         print("==Loading movies==")
         print("==Loading top movies==")
         get_top_movies()
+        print("==Top movies loaded==")
         for genre, var in self.checkboxes:
             if var.get():
                 print(f"==Loading movies for {genre}==")
@@ -112,6 +113,9 @@ class ConsoleRedirector:
 
     def write(self, text):
         self.textbox.insert(tk.END, text)
+        # Limpia si se han superado las 500 líneas.
+        # if self.textbox.index('end-1c') == '100.0':
+        #    self.textbox.delete(1.0, 2.0)
 
     def flush(self):
         pass

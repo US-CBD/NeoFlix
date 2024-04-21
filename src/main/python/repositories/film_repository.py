@@ -1,4 +1,5 @@
 import os
+import time
 
 import requests
 from py2neo import NodeMatcher, RelationshipMatcher, Relationship, Node
@@ -22,7 +23,6 @@ class FilmRepository(Repository):
 
 
         image_path = film.get_path()
-        print(image_path)
         if not os.path.exists(image_path):
             print(f"Downloading image for {film.title}")
             image = requests.get(film.url_image)
@@ -32,20 +32,37 @@ class FilmRepository(Repository):
 
         tx = self.graph.begin()
         tx.merge(node, "Film", "title")
+        already_save = []
         for director in film.directors:
+            print("Director: ", director.name)
+            if director.name in already_save:
+                continue
             director_node = self._create_or_update_person_node(director)
             tx.create(Relationship(node, "DIRECTED_BY", director_node))
+        already_save = []
         for actor in film.actors:
+            print("Actor: ", actor.name + " " + film.title)
+            if actor.name in already_save:
+                continue
+            already_save.append(actor.name)
             actor_node = self._create_or_update_person_node(actor)
             tx.create(Relationship(node, "ACTED_BY", actor_node))
+        already_save = []
         for genre in film.genres:
+            print("Genre: ", genre + " " + film.title)
+            if genre in already_save:
+                continue
+            already_save.append(genre)
             genre_node = Node("Genre", name=genre)
             tx.merge(genre_node, "Genre", "name")
             tx.create(Relationship(node, "IN_GENRE", genre_node))
         for opinion in film.opinions:
+            print("Opinion: ", opinion.text + " " + film.title)
             opinion_node = self._create_or_update_opinion_node(opinion)
             tx.create(Relationship(node, "HAS_OPINION", opinion_node))
+        print("Commiting transaction")
         tx.commit()
+        print(f"Commited transaction for {film.title}")
 
     def _create_or_update_person_node(self, person):
         """
@@ -59,13 +76,17 @@ class FilmRepository(Repository):
         """
         node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography, url_image=person.url_image)
         image_path = person.get_path()
-        print(image_path)
         if not os.path.exists(image_path):
             print(f"Downloading image for {person.name}")
-            image = requests.get(person.url_image)
-            with open(image_path, "wb") as file:
-                file.write(image.content)
+            print(image_path)
+            try:
+                image = requests.get(person.url_image)
+                with open(image_path, "wb") as file:
+                    file.write(image.content)
+            except Exception as e:
+                print(f"Error downloading image for {person.name}: {e}")
         self.graph.merge(node, "Person", "name")
+        print("Person node created")
         return node
 
     def _create_or_update_opinion_node(self, opinion):
@@ -192,10 +213,8 @@ class FilmRepository(Repository):
             Node: El nodo de director encontrado, o None si no se encuentra.
         """
         if film_node := self.find(title):
-            print(film_node)
             matcher = RelationshipMatcher(self.graph)
             directors = matcher.match((film_node, None), "DIRECTED_BY")
-            print(directors)
             return [director.end_node for director in directors]
         return None
 
