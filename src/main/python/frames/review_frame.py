@@ -1,15 +1,25 @@
 from tkinter import messagebox as tkmessagebox
 import customtkinter as ctk
-from src.main.python.models.models import Opinion
+from src.main.python.models.models import Opinion, Film
+from src.main.python.settings import Settings
+
 
 class ReviewFrame:
-    def __init__(self, film, settings):
+    def __init__(self, film: Film, settings: Settings) -> None:
+        """
+        Initializes a ReviewFrame object.
+
+        Args:
+            film (Film): The film to review.
+            settings (Any): The settings.
+        """
         self.root = ctk.CTkToplevel()
         self.film = film
         self.settings = settings
         self.initialize()
 
-    def initialize(self):
+    def initialize(self) -> None:
+        """Initializes the review frame."""
         self.root.title("Review")
         self.root.geometry("400x300")
         self.root.resizable(False, False)
@@ -33,7 +43,8 @@ class ReviewFrame:
                                            command=self.submit_opinion)
         self.submit_button.pack(pady=(20, 5))
 
-    def submit_opinion(self):
+    def submit_opinion(self) -> None:
+        """Submits the opinion."""
         opinion = self.opinion_textbox.get("1.0", "end-1c")
         rating = self.opinion_rating.get("1.0", "end-1c")
 
@@ -53,5 +64,6 @@ class ReviewFrame:
         opinion_object.save()
         self.film.add_opinion(opinion)
         tkmessagebox.showinfo("Success", "Opinion added successfully")
+
 
 

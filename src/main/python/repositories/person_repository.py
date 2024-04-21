@@ -1,56 +1,58 @@
 from py2neo import Node, NodeMatcher, RelationshipMatcher
+from typing import List, Optional
 
 from src.main.python.repositories.repository import Repository
 
 
 class PersonRepository(Repository):
     """
-    Repositorio para personas en la base de datos Neo4j.
+    Repository for people in the Neo4j database.
     """
 
-    def create_or_update(self, person):
+    def create_or_update(self, person: 'Person') -> None:
         """
-        Crea o actualiza una persona en la base de datos.
+        Creates or updates a person in the database.
 
         Args:
-            person (Person): La persona a crear o actualizar.
+            person (Person): The person to create or update.
         """
-        person_node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography)
+        person_node = Node("Person", name=person.name, age=person.birthday, bibliography=person.biography)
         tx = self.graph.begin()
         tx.merge(person_node, "Person", "name")
+        tx.commit()
 
-    def find_all(self):
+    def find_all(self) -> List[Node]:
         """
-        Busca todas las personas en la base de datos.
+        Finds all people in the database.
 
         Returns:
-            list: Lista de nodos de personas.
+            list: List of person nodes.
         """
         matcher = NodeMatcher(self.graph)
         return list(matcher.match("Person"))
 
-    def find(self, name):
+    def find(self, name: str) -> Optional[Node]:
         """
-        Busca una persona por nombre en la base de datos.
+        Finds a person by name in the database.
 
         Args:
-            name (str): El nombre de la persona a buscar.
+            name (str): The name of the person to find.
 
         Returns:
-            Node: El nodo de persona encontrado, o None si no se encuentra.
+            Node: The found person node, or None if not found.
         """
         matcher = NodeMatcher(self.graph)
         return matcher.match("Person", name=name).first()
 
-    def find_directed_films(self, name):
+    def find_directed_films(self, name: str) -> List[Node]:
         """
-        Busca las películas dirigidas por una persona en la base de datos.
+        Finds films directed by a person in the database.
 
         Args:
-            name (str): El nombre de la persona.
+            name (str): The name of the person.
 
         Returns:
-            list: Lista de nodos de películas dirigidas por la persona.
+            list: List of film nodes directed by the person.
         """
         if person_node := self.find(name):
             matcher = RelationshipMatcher(self.graph)
@@ -58,15 +60,15 @@ class PersonRepository(Repository):
             return [film.start_node for film in films]
         return []
 
-    def find_acted_films(self, name):
+    def find_acted_films(self, name: str) -> List[Node]:
         """
-        Busca las películas en las que una persona actuó en la base de datos.
+        Finds films in which a person acted in the database.
 
         Args:
-            name (str): El nombre de la persona.
+            name (str): The name of the person.
 
         Returns:
-            list: Lista de nodos de películas en las que la persona actuó.
+            list: List of film nodes in which the person acted.
         """
         if person_node := self.find(name):
             matcher = RelationshipMatcher(self.graph)
@@ -74,15 +76,15 @@ class PersonRepository(Repository):
             return [film.start_node for film in films]
         return []
 
-    def delete(self, person):
+    def delete(self, person: Person) -> bool:
         """
-        Elimina una persona de la base de datos.
+        Deletes a person from the database.
 
         Args:
-            person (Person): La persona a eliminar.
+            person (Person): The person to delete.
 
         Returns:
-            bool: True si la persona fue eliminada, False si no se encontró.
+            bool: True if the person was deleted, False if not found.
         """
         if person_node := self.find(person.name):
             tx = self.graph.begin()
@@ -91,20 +93,27 @@ class PersonRepository(Repository):
             return True
         return False
 
-    def exists(self, name):
+    def exists(self, name: str) -> bool:
         """
-        Comprueba si una persona existe en la base de datos.
+        Checks if a person exists in the database.
 
         Args:
-            name (str): El nombre de la persona a comprobar.
+            name (str): The name of the person to check.
 
         Returns:
-            bool: True si la persona existe, False si no existe.
+            bool: True if the person exists, False if not.
         """
         return self.find(name) is not None
 
     @staticmethod
-    def singleton():
+    def singleton() -> 'PersonRepository':
+        """
+        Gets the singleton instance of this repository.
+
+        Returns:
+            PersonRepository: The repository instance.
+        """
         if not hasattr(PersonRepository, "_instance"):
             PersonRepository._instance = PersonRepository()
         return PersonRepository._instance
+

@@ -1,5 +1,5 @@
 import os
-import time
+from typing import List, Union
 
 import requests
 from py2neo import NodeMatcher, RelationshipMatcher, Relationship, Node
@@ -9,24 +9,23 @@ from src.main.python.repositories.repository import Repository
 
 class FilmRepository(Repository):
     """
-    Repositorio para películas en la base de datos Neo4j.
+    Repository for movies in the Neo4j database.
     """
 
-    def create_or_update(self, film):
+    def create_or_update(self, film: 'Film') -> None:
         """
-        Crea o actualiza una película en la base de datos.
+        Creates or updates a movie in the database.
 
         Args:
-            film (Film): La película a crear o actualizar.
+            film (Film): The movie to create or update.
         """
-        node = Node("Film", title=film.title, release_date=film.release_date, description=film.description, url_image=film.url_image, vote_average=film.vote_average, is_popular=film.is_popular)
-
+        node = Node("Film", title=film.title, release_date=film.release_date, description=film.description,
+                    url_image=film.url_image, vote_average=film.vote_average, is_popular=film.is_popular)
 
         image_path = film.get_path()
         if not os.path.exists(image_path):
             print(f"Downloading image for {film.title}")
             image = requests.get(film.url_image)
-            print(image)
             with open(image_path, "wb") as file:
                 file.write(image.content)
 
@@ -60,21 +59,22 @@ class FilmRepository(Repository):
             print("Opinion: ", opinion.text + " " + film.title)
             opinion_node = self._create_or_update_opinion_node(opinion)
             tx.create(Relationship(node, "HAS_OPINION", opinion_node))
-        print("Commiting transaction")
+        print("Committing transaction")
         tx.commit()
-        print(f"Commited transaction for {film.title}")
+        print(f"Committed transaction for {film.title}")
 
-    def _create_or_update_person_node(self, person):
+    def _create_or_update_person_node(self, person: 'Person') -> Node:
         """
-        Crea o actualiza un nodo de persona en la base de datos.
+        Creates or updates a person node in the database.
 
         Args:
-            person (Person): La persona a crear o actualizar.
+            person (Person): The person to create or update.
 
         Returns:
-            Node: El nodo de persona creado o actualizado.
+            Node: The created or updated person node.
         """
-        node = Node("Person", name=person.name, age=person.birthday, bibliography=person.bibliography, url_image=person.url_image)
+        node = Node("Person", name=person.name, age=person.birthday, bibliography=person.biography,
+                    url_image=person.url_image)
         image_path = person.get_path()
         if not os.path.exists(image_path):
             print(f"Downloading image for {person.name}")
@@ -89,15 +89,15 @@ class FilmRepository(Repository):
         print("Person node created")
         return node
 
-    def _create_or_update_opinion_node(self, opinion):
+    def _create_or_update_opinion_node(self, opinion: 'Opinion') -> Node:
         """
-        Crea o actualiza un nodo de opinión en la base de datos.
+        Creates or updates an opinion node in the database.
 
         Args:
-            opinion (Opinion): La opinión a crear o actualizar.
+            opinion (Opinion): The opinion to create or update.
 
         Returns:
-            Node: El nodo de opinión creado o actualizado.
+            Node: The created or updated opinion node.
         """
         node = Node("Opinion", text=opinion.text, rating=opinion.rating)
         self.graph.merge(node, "Opinion", "text")
@@ -106,50 +106,54 @@ class FilmRepository(Repository):
             self.graph.merge(user_node, "User", "username")
             self.graph.merge(Relationship(node, "WRITTEN_BY", user_node))
         return node
-    
-    def contains(self, title):
+
+    def contains(self, title: str) -> List[Node]:
         return self.graph.run("MATCH (f:Film) WHERE f.title CONTAINS $title RETURN DISTINCT f", title=title).data()
 
-    def contains_by_genre(self, genre):
-        return self.graph.run("MATCH (f:Film)-[:IN_GENRE]->(g:Genre) WHERE g.name CONTAINS $genre RETURN DISTINCT f", genre=genre).data()
-    def contains_by_actor(self, actor):
-        return self.graph.run("MATCH (f:Film)-[:ACTED_BY]->(a:Person) WHERE a.name CONTAINS " +'"'+actor+ '"'+" RETURN DISTINCT f").data()
+    def contains_by_genre(self, genre: str) -> List[Node]:
+        return self.graph.run("MATCH (f:Film)-[:IN_GENRE]->(g:Genre) WHERE g.name CONTAINS $genre RETURN DISTINCT f",
+                              genre=genre).data()
 
-    def contains_by_director(self, director):
-        return self.graph.run("MATCH (f:Film)-[:DIRECTED_BY]->(d:Person) WHERE d.name CONTAINS "+ '"'+director+'"'+" RETURN DISTINCT f").data()
+    def contains_by_actor(self, actor: str) -> List[Node]:
+        return self.graph.run(
+            f"MATCH (f:Film)-[:ACTED_BY]->(a:Person) WHERE a.name CONTAINS '{actor}' RETURN DISTINCT f").data()
 
-    def find(self, title):
+    def contains_by_director(self, director: str) -> List[Node]:
+        return self.graph.run(
+            f"MATCH (f:Film)-[:DIRECTED_BY]->(d:Person) WHERE d.name CONTAINS '{director}' RETURN DISTINCT f").data()
+
+    def find(self, title: str) -> Union[Node, None]:
         """
-        Busca una película por título en la base de datos.
+        Finds a movie by title in the database.
 
         Args:
-            title (str): El título de la película a buscar.
+            title (str): The title of the movie to find.
 
         Returns:
-            Node: El nodo de película encontrado, o None si no se encuentra.
+            Union[Node, None]: The found movie node, or None if not found.
         """
         matcher = NodeMatcher(self.graph)
         return matcher.match("Film", title=title).first()
 
-    def find_popular(self):
+    def find_popular(self) -> List[Node]:
         """
-        Busca las películas populares en la base de datos.
+        Finds popular movies in the database.
 
         Returns:
-            list: Lista de nodos de películas populares.
+            list: List of nodes of popular movies.
         """
         matcher = NodeMatcher(self.graph)
         return matcher.match("Film", is_popular=True)
 
-    def find_by_genre(self, genre):
+    def find_by_genre(self, genre: str) -> List[Node]:
         """
-        Busca películas por género en la base de datos.
+        Finds movies by genre in the database.
 
         Args:
-            genre (str): El género a buscar.
+            genre (str): The genre to find.
 
         Returns:
-            list: Lista de nodos de películas del género especificado.
+            list: List of nodes of movies of the specified genre.
         """
         if genre_node := self.find_genre(genre):
             matcher = RelationshipMatcher(self.graph)
@@ -157,28 +161,28 @@ class FilmRepository(Repository):
             return [film.start_node for film in films]
         return []
 
-    def find_genre(self, genre):
+    def find_genre(self, genre: str) -> Union[Node, None]:
         """
-        Busca el gebrero por nombre en la base de datos.
+        Finds the genre by name in the database.
 
         Args:
-            genre (str): El gebrero a buscar.
+            genre (str): The genre to find.
 
         Returns:
-            Node: El nodo de gebrero encontrado, o None si no se encuentra.
+            Union[Node, None]: The found genre node, or None if not found.
         """
         matcher = NodeMatcher(self.graph)
         return matcher.match("Genre", name=genre).first()
 
-    def find_actors_for_film(self, title):
+    def find_actors_for_film(self, title: str) -> List[Node]:
         """
-        Busca los actores de una película por título en la base de datos.
+        Finds the actors of a movie by title in the database.
 
         Args:
-            title (str): El título de la película.
+            title (str): The title of the movie.
 
         Returns:
-            list: Lista de nodos de actores que participan en la película.
+            list: List of nodes of actors involved in the movie.
         """
         if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
@@ -186,15 +190,15 @@ class FilmRepository(Repository):
             return [actor.end_node for actor in actors]
         return []
 
-    def find_genres_for_film(self, title):
+    def find_genres_for_film(self, title: str) -> List[Node]:
         """
-        Busca los géneros de una película por título en la base de datos.
+        Finds the genres of a movie by title in the database.
 
         Args:
-            title (str): El título de la película.
+            title (str): The title of the movie.
 
         Returns:
-            list: Lista de nodos de géneros de la película.
+            list: List of nodes of genres of the movie.
         """
         if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
@@ -202,15 +206,15 @@ class FilmRepository(Repository):
             return [genre.end_node for genre in genres]
         return []
 
-    def find_director_for_film(self, title):
+    def find_director_for_film(self, title: str) -> Union[Node, None]:
         """
-        Busca el director de una película por título en la base de datos.
+        Finds the director of a movie by title in the database.
 
         Args:
-            title (str): El título de la película.
+            title (str): The title of the movie.
 
         Returns:
-            Node: El nodo de director encontrado, o None si no se encuentra.
+            Union[Node, None]: The found director node, or None if not found.
         """
         if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
@@ -218,42 +222,42 @@ class FilmRepository(Repository):
             return [director.end_node for director in directors]
         return None
 
-    def find_opinions_for_film(self, title):
+    def find_opinions_for_film(self, title: str) -> List[Node]:
         """
-        Busca las opiniones de una película por título en la base de datos.
+        Finds the opinions of a movie by title in the database.
 
         Args:
-            title (str): El título de la película.
+            title (str): The title of the movie.
 
         Returns:
-            list: Lista de nodos de opiniones de la película.
+            list: List of nodes of opinions of the movie.
         """
         if film_node := self.find(title):
             matcher = RelationshipMatcher(self.graph)
             opinions = matcher.match((film_node, None), "HAS_OPINION")
             return [opinion.end_node for opinion in opinions]
-            
+
         return []
 
-    def find_all(self):
+    def find_all(self) -> List[Node]:
         """
-        Busca todas las películas en la base de datos.
+        Finds all movies in the database.
 
         Returns:
-            list: Lista de nodos de todas las películas.
+            list: List of nodes of all movies.
         """
         matcher = NodeMatcher(self.graph)
         return matcher.match("Film")
 
-    def delete(self, film):
+    def delete(self, film: 'Film') -> bool:
         """
-        Elimina una película de la base de datos.
+        Deletes a movie from the database.
 
         Args:
-            film (Film): La película a eliminar.
+            film (Film): The movie to delete.
 
         Returns:
-            bool: True si la película se eliminó correctamente, False si no se encontró.
+            bool: True if the movie was successfully deleted, False if not found.
         """
         if film_node := self.find(film.title):
             tx = self.graph.begin()
@@ -262,26 +266,27 @@ class FilmRepository(Repository):
             return True
         return False
 
-    def exists(self, title):
+    def exists(self, title: str) -> bool:
         """
-        Verifica si una película existe en la base de datos.
+        Checks if a movie exists in the database.
 
         Args:
-            title (str): El título de la película a verificar.
+            title (str): The title of the movie to check.
 
         Returns:
-            bool: True si la película existe, False si no existe.
+            bool: True if the movie exists, False if not exists.
         """
         return self.find(title) is not None
 
     @staticmethod
-    def singleton():
+    def singleton() -> 'FilmRepository':
         """
-        Obtiene la única instancia de este repositorio.
+        Gets the singleton instance of this repository.
 
         Returns:
-            FilmRepository: La instancia del repositorio.
+            FilmRepository: The repository instance.
         """
         if not hasattr(FilmRepository, "_instance"):
             FilmRepository._instance = FilmRepository()
         return FilmRepository._instance
+
