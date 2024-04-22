@@ -144,11 +144,18 @@ class DetailsFilmFrame(DetailFrame):
                 relation_type = match.group(1)
             else:
                 relation_type = ''
-
-            G.add_edge(film_node['title'], other_node['name'])
-            edge_labels[(film_node['title'], other_node['name'])] = relation_type
+            try:
+                G.add_edge(film_node['title'], other_node['name'])
+            except Exception as e:
+                print(other_node["text"])
+                G.add_edge(film_node['title'], other_node["text"])
+            if("name" in other_node):
+                edge_labels[(film_node['title'], other_node['name'])] = relation_type
+            elif("text" in other_node):
+                edge_labels[(film_node['title'], other_node['text'])] = relation_type
+            
         pos = nx.spring_layout(G)
-        
+        print(edge_labels)
         # Restablecer el estilo de Matplotlib
         plt.style.use('default')
 
