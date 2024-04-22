@@ -76,7 +76,7 @@ class PersonRepository(Repository):
             return [film.start_node for film in films]
         return []
 
-    def delete(self, person: Person) -> bool:
+    def delete(self, person: 'Person') -> bool:
         """
         Deletes a person from the database.
 

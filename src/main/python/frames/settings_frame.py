@@ -13,13 +13,13 @@ from src.main.python.settings import Settings
 
 
 class SettingsFrame:
-    def __init__(self, settings: Settings, settings_frame: ctk.CTkWidget) -> None:
+    def __init__(self, settings: Settings, settings_frame: ctk.CTkFrame) -> None:
         """
         Initializes a SettingsFrame object.
 
         Args:
-            settings (Any): The settings.
-            settings_frame (ctk.CTkWidget): The settings frame.
+            settings (Settings): The settings.
+            settings_frame (ctk.CTkFrame): The settings frame.
         """
         self.settings = settings
         self.settings_frame = settings_frame

@@ -1,5 +1,5 @@
 import tkinter as tk
-from typing import List
+from typing import List, Dict, Callable, Any
 
 import customtkinter as ctk
 
@@ -93,7 +93,7 @@ class FilterFilmFrame(FilterFrame):
         }
         super().__init__(parent_frame, settings, filter_options, filter_functions, *args, **kwargs)
 
-    def get_list_frame(self) -> Any:
+    def get_list_frame(self) -> ListFilmsFrames:
         """Gets the list frame."""
         return ListFilmsFrames(self, self.items, self.settings, width=780, height=500, size=(100, 100))
 

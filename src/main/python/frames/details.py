@@ -5,7 +5,6 @@ import PIL.Image
 import customtkinter as ctk
 from customtkinter import CTkScrollableFrame
 
-from src.main.python.frames.list_frame import ListFilmsFrames
 from src.main.python.frames.review_frame import ReviewFrame
 from src.main.python.models.models import Film, Worker
 
@@ -174,9 +173,8 @@ class DetailsFilmFrame(DetailFrame):
         self.new_frame.resizable(False, False)
         self.new_frame.configure(bg="black")
 
-        films = Film.find_by_genre(genre)
-
-        self.scrollable_frame = ListFilmsFrames(self.new_frame, films, self.settings, num_columns=4, size=(100, 100))
+        from src.main.python.frames.films_with_genre_frame import FilmsWithGenreFrames
+        self.scrollable_frame = FilmsWithGenreFrames(self.new_frame, genre, self.settings, num_columns=4, size=(100, 100))
 
 
     def open_opinion_frame(self) -> None:

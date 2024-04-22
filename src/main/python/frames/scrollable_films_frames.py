@@ -1,18 +1,19 @@
-from typing import List
+from typing import List, Tuple
 
 import customtkinter as ctk
 
 from src.main.python.frames.cards import CardFilmFrame
 from src.main.python.models.models import Film
+from src.main.python.settings import Settings
 
 
 class ScrollableFilmsFrames(ctk.CTkFrame):
-    def __init__(self, parent_frame: ctk.CTkWidget, films: List[Film], settings: Any, width: int = 500, height: int = 150, size: Tuple[int, int] = (100, 100), *args, **kwargs) -> None:
+    def __init__(self, parent_frame: ctk.CTkFrame, films: List[Film], settings: Settings, width: int = 500, height: int = 150, size: Tuple[int, int] = (100, 100), *args, **kwargs) -> None:
         """
         Initializes a ScrollableFilmsFrames object.
 
         Args:
-            parent_frame (ctk.CTkWidget): The parent frame.
+            parent_frame (ctk.CTkFrame): The parent frame.
             films (List[Film]): The list of films.
             settings (Any): The settings.
             width (int, optional): The width of the scrollable frame. Defaults to 500.

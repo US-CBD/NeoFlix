@@ -92,3 +92,4 @@ class CardPersonFrame(CardFrame):
         """
         super().__init__(parent_frame, person, settings, row, column, size, 'name', lambda person: person.get_path(),
                          DetailsPersonFrame)
+

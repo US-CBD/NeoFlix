@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 import customtkinter as ctk
 
 from src.main.python.frames.scrollable_films_frames import ScrollableFilmsFrames

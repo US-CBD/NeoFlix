@@ -1,5 +1,5 @@
 import os
-from typing import List, Union
+from typing import List, Union, Optional
 
 import requests
 from py2neo import NodeMatcher, RelationshipMatcher, Relationship, Node
@@ -161,7 +161,7 @@ class FilmRepository(Repository):
             return [film.start_node for film in films]
         return []
 
-    def find_genre(self, genre: str) -> Union[Node, None]:
+    def find_genre(self, genre: str) -> Optional[Node]:
         """
         Finds the genre by name in the database.
 

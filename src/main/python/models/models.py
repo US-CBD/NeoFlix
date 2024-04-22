@@ -31,7 +31,7 @@ class Film(Base):
         return f"{self.title} ({self.release_date})"
 
     def _get_url_image(self, file: str) -> str:
-        if file and ('.' in file or '/' in file) and file != "None" and file != "":
+        if file and file != "None" and file != "":
             return f'https://image.tmdb.org/t/p/original/{file}'
         return "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
 
@@ -48,7 +48,7 @@ class Film(Base):
     def add_actor(self, actor: 'Worker') -> None:
         self.actors.append(actor)
 
-    def add_genre(self, genre: 'Genre') -> None:
+    def add_genre(self, genre: 'str') -> None:
         self.genres.append(genre)
 
     def add_opinion(self, opinion: 'Opinion') -> None:
@@ -85,7 +85,7 @@ class Film(Base):
         return [Film.from_node(film) for film in FilmRepository.singleton().find(title)]
 
     @staticmethod
-    def find_by_genre(genre: 'Genre') -> List['Film']:
+    def find_by_genre(genre: str) -> List['Film']:
         return [Film.from_node(film) for film in FilmRepository.singleton().find_by_genre(genre)]
 
     @staticmethod
