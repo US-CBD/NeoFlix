@@ -2,17 +2,18 @@ from tmdbv3api import Movie
 
 from src.main.python.api.base import process_movies
 
-def get_top_movies(start=1, end=2, max_workers=5):
+
+def get_top_movies(start: int = 1, end: int = 2, max_workers: int = 5) -> list:
     """
-    Obtiene películas populares desde la API de TMDb.
+    Retrieve popular movies from the TMDb API.
 
     Args:
-        start (int): Número de página inicial (por defecto: 1).
-        end (int): Número de página final (por defecto: 2).
-        max_workers (int): Número máximo de hilos de ejecución (por defecto: 5).
+        start (int): The starting page number (default: 1).
+        end (int): The ending page number (default: 2).
+        max_workers (int): The maximum number of worker threads (default: 5).
 
     Returns:
-        list: Lista de objetos Film creados a partir de las películas populares.
+        list: List of Film objects created from the popular movies.
     """
     fetch_function = lambda page: Movie().popular(page=page)
-    return process_movies(fetch_function, start, end, max_workers)
+    return process_movies(fetch_function, start, end, max_workers, are_popular=True)
