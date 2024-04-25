@@ -3,6 +3,18 @@ from typing import Any, Tuple, List
 
 import PIL.Image
 import customtkinter as ctk
+from PIL import Image
+import networkx as nx
+from numpy import record
+from py2neo import Graph
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from configparser import ConfigParser
+import os, re
+import matplotlib.pyplot as plt
+from src.main.python.frames.review_frame import ReviewFrame
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+
 from customtkinter import CTkScrollableFrame
 
 from src.main.python.frames.review_frame import ReviewFrame
@@ -138,6 +150,10 @@ class DetailsFilmFrame(DetailFrame):
         self.opinion_buttom = ctk.CTkButton(self.details_frame, text="👍 Give your opinion", fg_color="gray",
                                             command=self.open_opinion_frame)
         self.opinion_buttom.grid(row=10, column=0, sticky="w", pady=(10, 0))
+        
+        self.graph_buttom = ctk.CTkButton(self.details_frame, text="📊 Show graph", fg_color="gray"
+                                          , command=self.show_graph)
+        self.graph_buttom.grid(row=10, column=1, sticky="w", pady=(10, 0))
 
         if len(self.item.get_opinions()) >= 1:
             self.add_label(self.details_frame, text="Opinions: ", row=11, column=0, sticky="w", fg_color="gray")
@@ -181,6 +197,55 @@ class DetailsFilmFrame(DetailFrame):
         """Opens the opinion frame."""
         ReviewFrame(self.item, self.settings)
 
+
+    def show_graph(self):
+        config = ConfigParser()
+        config_path = os.path.join(os.path.dirname(__file__), "../config.ini")
+        config.read(config_path)
+        uri = config.get("NEO4J", "uri")
+        user = config.get("NEO4J", "user")
+        password = config.get("NEO4J", "password")
+        graph = Graph(uri, auth=(user, password))
+        query = f"MATCH (u:Film)-[a]->(m) WHERE u.title = '{self.item.title}' RETURN *"
+        result = graph.run(query).data()
+        G = nx.DiGraph()
+        edge_labels = {}
+        for r in result:
+            film_node = r['u']
+            other_node = r['m']
+            match = re.search(r'\[:([^]]+)\]', str(r['a']))
+            if match:
+                relation_type = match.group(1)
+            else:
+                relation_type = ''
+            try:
+                G.add_edge(film_node['title'], other_node['name'])
+            except Exception as e:
+                print(other_node["text"])
+                G.add_edge(film_node['title'], other_node["text"])
+            if("name" in other_node):
+                edge_labels[(film_node['title'], other_node['name'])] = relation_type
+            elif("text" in other_node):
+                edge_labels[(film_node['title'], other_node['text'])] = relation_type
+            
+        pos = nx.spring_layout(G)
+        print(edge_labels)
+        # Restablecer el estilo de Matplotlib
+        plt.style.use('default')
+
+        # Obtener los ejes actuales
+        ax = plt.gca()
+        
+        # Establecer el color de fondo de los ejes utilizando el método set_facecolor
+        ax.set_facecolor('black')
+        
+        nx.draw(G, pos, with_labels=True, node_size=2000, node_color='skyblue', font_size=10, font_weight='bold', edge_color='gray', width=1.5)
+
+        # Dibujar etiquetas de arista
+        nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=edge_labels, font_color='black')
+
+        plt.show()
+        
     def get_color(self, rating: float) -> str:
         """
         Gets the color based on the rating.
@@ -191,6 +256,7 @@ class DetailsFilmFrame(DetailFrame):
         Returns:
             str: The color string.
         """
+
         if rating >= 7.5:
             return "green"
         elif rating >= 5:
