@@ -43,6 +43,19 @@ class UserRepository(Repository):
         matcher = NodeMatcher(self.graph)
         return matcher.match("User", username=username).first()
 
+
+    def contains_name(self, name: str) -> List[Node]:
+        """
+        Finds a user by name in the database.
+
+        Args:
+            name (str): The name of the user to find.
+
+        Returns:
+            Node: The found user node, or None if not found.
+        """
+        print(self.graph.run(f"MATCH (p:Person) WHERE p.name CONTAINS '{name}' RETURN DISTINCT p").data())
+        return self.graph.run(f"MATCH (p:Person) WHERE p.name CONTAINS '{name}' RETURN DISTINCT p").data()
     def find_favourite_films(self, username: str) -> List[Node]:
         """
         Finds the favorite films of a user in the database.

@@ -64,7 +64,7 @@ class FilterFrame(ctk.CTkFrame):
             filtered_items = self.filter_functions[filter_by](search_text)
         else:
             filtered_items = self.filter_functions['default']()
-
+        print(filtered_items)
         self.list_items_frame.update(filtered_items)
 
     def get_list_frame(self) -> Any:
@@ -111,7 +111,7 @@ class FilterPersonFrame(FilterFrame):
         """
         filter_options = ["Filter by", "Name", "Acted in", "Directed by"]
         filter_functions = {
-            "Name": Worker.find,
+            "Name": Worker.contains_name,
             "Acted in": Film.get_actors_for_film,
             "Directed by": Film.get_directors_for_film,
             "default": Worker.find_all

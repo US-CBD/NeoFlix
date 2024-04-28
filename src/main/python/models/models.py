@@ -185,6 +185,10 @@ class Worker(Base):
     def get_films(self) -> List[Film]:
         return list(set(self.get_acted_films() + self.get_directed_films()))
 
+    @staticmethod
+    def contains_name(name):
+        return [Worker.from_node(user['p']) for user in UserRepository.singleton().contains_name(name)]
+
     def get_path(self) -> str:
         folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../resources/images/persons/')
         if not os.path.exists(folder):
