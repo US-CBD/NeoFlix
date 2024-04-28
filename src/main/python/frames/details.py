@@ -315,7 +315,7 @@ class DetailsPersonFrame(DetailFrame):
                                           fg_color="gray30", corner_radius=9, font=("Helvetica", 24, "bold"),
                                           cursor="hand1")
 
-        self.add_label(self.details_frame, text="Bibliography:", row=1, column=0, sticky="w", fg_color="gray",
+        self.add_label(self.details_frame, text="Biography:", row=1, column=0, sticky="w", fg_color="gray",
                        font=("Helvetica", 16, "bold"), corner_radius=6)
         self.add_textbox(self.details_frame, text=self.item.biography, row=2, column=0, rowspan=2)
 
