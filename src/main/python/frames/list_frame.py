@@ -46,11 +46,13 @@ class ListFrames(ctk.CTkScrollableFrame):
 
             self.get_card_frame(item, row, column)
 
-        next_button = ctk.CTkButton(self, text="Next", command=self.next_page)
-        next_button.grid(row=self.num_columns + 1, column=1)
-
         previous_button = ctk.CTkButton(self, text="Previous", command=self.previous_page)
-        previous_button.grid(row=self.num_columns + 1, column=2)
+        previous_button.grid(row=self.num_columns + 1, column=1)
+
+        next_button = ctk.CTkButton(self, text="Next", command=self.next_page)
+        next_button.grid(row=self.num_columns + 1, column=2)
+
+
 
     def get_card_frame(self, item: Any, row: int, column: int) -> None:
         """Gets the card frame."""
