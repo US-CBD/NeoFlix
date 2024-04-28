@@ -77,7 +77,7 @@ class FilmRepository(Repository):
         Returns:
             Node: The created or updated person node.
         """
-        node = Node("Person", name=person.name, age=person.birthday, bibliography=person.biography,
+        node = Node("Person", name=person.name, age=person.birthday, biography=person.biography,
                     url_image=person.url_image)
         image_path = person.get_path()
         if not os.path.exists(image_path):
