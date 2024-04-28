@@ -1,5 +1,7 @@
 from tkinter import messagebox as tkmessagebox
+
 import customtkinter as ctk
+
 from src.main.python.models.models import Opinion, Film
 from src.main.python.settings import Settings
 

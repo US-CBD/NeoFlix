@@ -8,12 +8,10 @@ import networkx as nx
 from numpy import record
 from py2neo import Graph
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
 from configparser import ConfigParser
 import os, re
 import matplotlib.pyplot as plt
 from src.main.python.frames.review_frame import ReviewFrame
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 from customtkinter import CTkScrollableFrame
 
@@ -59,6 +57,7 @@ class DetailFrame:
     def configure_image(self) -> None:
         """Configures the image display."""
         try:
+            print(self.item.get_path())
             pil_image = PIL.Image.open(self.item.get_path())
         except PIL.UnidentifiedImageError:
             pil_image = PIL.Image.new("RGB", (200, 400), "gray")
@@ -128,6 +127,7 @@ class DetailsFilmFrame(DetailFrame):
         self.add_label(self.details_frame, text=self.item.vote_average, row=0, column=1, sticky="w",
                        fg_color=self.get_color(self.item.vote_average), text_color="black", corner_radius=10,
                        font=("Helvetica", 12, "bold"))
+        print(self.item.get_genres())
         if len(self.item.get_genres()) >= 1:
             self.add_label(self.details_frame, text="Genres: ", row=1, column=0, sticky="w", fg_color="gray",
                            corner_radius=6, font=("Helvetica", 16, "bold"))
@@ -190,7 +190,7 @@ class DetailsFilmFrame(DetailFrame):
         self.new_frame.configure(bg="black")
 
         from src.main.python.frames.films_with_genre_frame import FilmsWithGenreFrames
-        self.scrollable_frame = FilmsWithGenreFrames(self.new_frame, genre, self.settings, num_columns=4, size=(100, 100))
+        self.scrollable_frame = FilmsWithGenreFrames(self.new_frame, genre, self.settings, num_columns=4, size=(100, 100), width=700, height=150,)
 
 
     def open_opinion_frame(self) -> None:

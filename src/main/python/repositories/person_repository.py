@@ -1,5 +1,6 @@
-from py2neo import Node, NodeMatcher, RelationshipMatcher
 from typing import List, Optional
+
+from py2neo import Node, NodeMatcher, RelationshipMatcher
 
 from src.main.python.repositories.repository import Repository
 

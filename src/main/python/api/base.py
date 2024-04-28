@@ -142,6 +142,7 @@ def process_casts(executor: ThreadPoolExecutor, casts: List[dict], parse_movie: 
     future_workers = [executor.submit(parse_worker_details, cast) for cast in casts]
     for future in future_workers:
         worker_details = future.result()
+        print(f"Processing worker {worker_details.name}")
         if worker_details is not None:
             if worker_details.department == 'Acting':
                 parse_movie.add_actor(worker_details)
@@ -165,16 +166,25 @@ def process_movies(fetch_function: Callable, start: int, end: int, max_workers: 
     """
     movies = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = []
         for page in range(start, end):
             results = fetch_function(page)
             for movie_data in results:
-                parse_movie, casts = parse_movie_data(movie_data, are_popular)
-                futures.append(executor.submit(process_casts, executor, casts, parse_movie))
 
-        for future in futures:
-            future.result()
-            movies.append(parse_movie)
+                print("Processing movie ", movie_data['title'])
+                start_time = time.time()
+                if not Film.exists(movie_data['title']):
+                    parse_movie, casts = parse_movie_data(movie_data, are_popular)
+                    process_casts(executor, casts, parse_movie)
+                    movies.append(parse_movie)
+                end_time = time.time()
+                print("Time =", end_time - start_time)
+
+    print("Saving movies!!!")
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        for movie in movies:
+            print("Saving " + movie.title)
+            executor.submit(movie.save())
 
     return movies
 

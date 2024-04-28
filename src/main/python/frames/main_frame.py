@@ -32,7 +32,7 @@ class MainFrame:
         self.create_scrollable_frame(Film.find_popular(), 0)
 
         for i, genre in enumerate(self.settings.selected_genres):
-            films = Film.find_by_genre(genre.capitalize())
+            films = Film.find_by_genre(genre.lower())
             self.create_scrollable_frame(films, i + 1, genre)
 
         self.main_frame.after(100, self.add_logic)

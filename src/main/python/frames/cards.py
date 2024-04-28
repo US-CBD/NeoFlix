@@ -3,7 +3,6 @@ from typing import Any, Callable, Type, Tuple
 
 import PIL.Image
 import customtkinter as ctk
-from PIL.Image import Image
 from customtkinter import CTkFrame
 
 from src.main.python.frames.details import DetailsFilmFrame, DetailsPersonFrame

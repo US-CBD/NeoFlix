@@ -1,7 +1,7 @@
-loguru==0.7.2
-customtkinter==5.2.2
-py2neo
-pillow==10.2.0
-tmdbv3api==1.9.0
-matplotlib
-networkx
+loguru~=0.7.2
+customtkinter~=5.2.2
+py2neo~=2021.2.4
+pillow~=10.2.0
+tmdbv3api~=1.9.0
+matplotlib~=3.8.4
+networkx~=3.3.0

@@ -1,9 +1,9 @@
 import os
 from typing import List
 
+import customtkinter as ctk
 from PIL import Image
 from py2neo import Node
-import customtkinter as ctk
 
 from src.main.python.models.base import Base
 from src.main.python.repositories.film_repository import FilmRepository
@@ -17,6 +17,7 @@ class Film(Base):
         self.title = title
         self.release_date = release_date
         self.description = description
+        print("File", file)
         self.url_image = self._get_url_image(file)
         self.vote_average = vote_average
         self.is_popular = is_popular
@@ -25,19 +26,20 @@ class Film(Base):
         self.genres = []
         self.opinions = []
         super().__init__(FilmRepository.singleton())
-        self._load_image()
 
     def __str__(self):
         return f"{self.title} ({self.release_date})"
 
     def _get_url_image(self, file: str) -> str:
+        print("Condition", file)
         if file and file != "None" and file != "":
             return f'https://image.tmdb.org/t/p/original/{file}'
         return "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
 
-    def _load_image(self) -> None:
+    def prove_load_image(self) -> None:
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.get_path())
         try:
+
             ctk.CTkImage(Image.open(image_path), size=(100, 100))
         except:
             self.url_image = "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
@@ -133,8 +135,12 @@ class Film(Base):
         return [Worker.from_node(actor) for actor in FilmRepository.singleton().find_actors_for_film(title)]
 
     def get_genres(self) -> List[str]:
+        for genre in self.repository.find_genres_for_film(self.title):
+            print(genre)
+
         self.genres = list(
             set([genre["name"] for genre in self.repository.find_genres_for_film(self.title)] + self.genres))
+        print("Gen", self.genres)
         return self.genres
 
     def get_opinions(self) -> List['Opinion']:

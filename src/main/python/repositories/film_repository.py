@@ -19,6 +19,9 @@ class FilmRepository(Repository):
         Args:
             film (Film): The movie to create or update.
         """
+
+        print(f"Creating or updating movie: {film.title}")
+
         node = Node("Film", title=film.title, release_date=film.release_date, description=film.description,
                     url_image=film.url_image, vote_average=film.vote_average, is_popular=film.is_popular)
 
@@ -28,6 +31,7 @@ class FilmRepository(Repository):
             image = requests.get(film.url_image)
             with open(image_path, "wb") as file:
                 file.write(image.content)
+        film.prove_load_image()
 
         tx = self.graph.begin()
         tx.merge(node, "Film", "title")
@@ -47,11 +51,11 @@ class FilmRepository(Repository):
             actor_node = self._create_or_update_person_node(actor)
             tx.create(Relationship(node, "ACTED_BY", actor_node))
         already_save = []
-        for genre in film.genres:
-            print("Genre: ", genre + " " + film.title)
+        for genre in film.genres[0]:
             if genre in already_save:
                 continue
             already_save.append(genre)
+            print("Genre: ", genre)
             genre_node = Node("Genre", name=genre)
             tx.merge(genre_node, "Genre", "name")
             tx.create(Relationship(node, "IN_GENRE", genre_node))

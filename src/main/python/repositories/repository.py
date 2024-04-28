@@ -1,7 +1,7 @@
 import os
 from configparser import ConfigParser
+
 from py2neo import Graph
-from typing import Any
 
 
 class Repository:

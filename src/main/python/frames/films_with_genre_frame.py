@@ -22,7 +22,7 @@ class FilmsWithGenreFrames(ListFrames):
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
         """
-        films = Film.find_by_genre(genre.capitalize())
+        films = Film.find_by_genre(genre.lower())
         super().__init__(parent_frame, films, 'film', settings, num_columns, size, *args, **kwargs)
 
     def get_card_frame(self, film: Film, row: int, column: int) -> None:
