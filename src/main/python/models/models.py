@@ -17,7 +17,6 @@ class Film(Base):
         self.title = title
         self.release_date = release_date
         self.description = description
-        print("File", file)
         self.url_image = self._get_url_image(file)
         self.vote_average = vote_average
         self.is_popular = is_popular
@@ -31,7 +30,6 @@ class Film(Base):
         return f"{self.title} ({self.release_date})"
 
     def _get_url_image(self, file: str) -> str:
-        print("Condition", file)
         if file and file != "None" and file != "":
             return f'https://image.tmdb.org/t/p/original/{file}'
         return "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg"
