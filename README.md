@@ -50,7 +50,7 @@ To get the system up and running, it's essential to have Neo4J Desktop installed
    - On Linux:
      ```bash
      chmod +x neo_flix_app.py
-     ./main.py
+     ./neo_flix_app.py
      ```
 
 This guide ensures the setup of Neo4j and the project's dependencies, allowing you to run the system seamlessly.
