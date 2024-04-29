@@ -40,16 +40,16 @@ To get the system up and running, it's essential to have Neo4J Desktop installed
      ```
 
 6. **Run main.py:**
-   - Finally, execute `main.py` located at "src/main/python/main.py." You can do this from a development environment like PyCharm or Visual Studio Code or from the terminal.
+   - Finally, execute `neo_flix_app.py` located at "src/main/python/main.py." You can do this from a development environment like PyCharm or Visual Studio Code or from the terminal.
    
    - On Windows:
      ```bash
-     python main.py
+     python neo_flix_app.py
      ```
 
    - On Linux:
      ```bash
-     chmod +x main.py
+     chmod +x neo_flix_app.py
      ./main.py
      ```
 
